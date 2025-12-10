@@ -1,0 +1,51 @@
+import { createRouter, createWebHashHistory, RouterView } from 'vue-router';
+import TictactoeRoutes from '@/router/tictactoe';
+import PlayGame from '@/router/playGame';
+import Environmental from '@/router/environmental';
+
+import Home from '@/container/Home/index.vue';
+import BlocklyGui from '@/container/BlocklyGui/index.vue';
+import NotFound from '@/container/NotFound.vue';
+
+const routes = [
+  // ✅ 访问根路径时重定向到 /xxx
+  {
+    path: '/',
+    redirect: '/home'
+  },
+  {
+    path: '/home',
+    component: Home,
+  },
+  {
+    path: '/tictactoe',
+    component: RouterView,
+    children: TictactoeRoutes,
+  },
+  {
+    path: '/play-game',
+    component: RouterView,
+    children: PlayGame,
+  },
+  {
+    path: '/blockly-gui',
+    component: BlocklyGui
+  },
+  {
+    path: '/environmental',
+    component: RouterView,
+    children: Environmental
+  },
+  {
+    path: '/:pathMatch(.*)*',
+    component: NotFound
+  },
+]
+
+
+const router = createRouter({
+  history: createWebHashHistory(), // ✅ 使用 HTML5 History 模式
+  routes,
+})
+
+export default router

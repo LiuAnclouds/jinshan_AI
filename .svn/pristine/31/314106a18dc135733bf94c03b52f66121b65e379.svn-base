@@ -1,0 +1,577 @@
+<!doctype html>
+<html lang="zh-CN">
+
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Fly Bird — 人机混合（模拟AI）演示</title>
+  <style>
+    body {
+      font-family: system-ui, Segoe UI, Roboto, 'Helvetica Neue', Arial;
+      margin: 12px;
+      background: #0b1220;
+      color: #e6eef8
+    }
+
+    .container {
+      display: flex;
+      justify-content: center;
+      gap: 12px
+    }
+
+    .tool-introduce {
+      min-width: 100px;
+      max-width: 200px;
+      font-size: 16px;
+      color: #ccc;
+      padding-right: 20px;
+    }
+
+    canvas {
+      background: #70c5ce;
+      border: 4px solid #04293a;
+      border-radius: 8px
+    }
+
+    .panel {
+      display: flex;
+      gap: 12px;
+    }
+
+    .controls {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin-bottom: 8px
+    }
+
+    button {
+      padding: 6px 10px;
+      border-radius: 6px;
+      border: 0;
+      background: #1b6ca8;
+      color: white;
+      cursor: pointer
+    }
+
+    button.secondary {
+      background: #4b5563
+    }
+
+    .status {
+      min-width: 320px;
+      font-size: 16px;
+      line-height: 24px;
+      background: #071322;
+      padding: 10px;
+      border-radius: 8px;
+      border: 1px solid #133444
+    }
+
+    pre {
+      white-space: pre-wrap;
+      color: #dbeafe;
+      overflow: auto
+    }
+
+    .topright {
+      position: absolute;
+      right: 34px;
+      top: 18px;
+      background: rgba(2, 6, 23, 0.7);
+      padding: 8px;
+      border-radius: 6px;
+      border: 1px solid rgba(255, 255, 255, 0.06)
+    }
+
+    .ui {
+      position: relative
+    }
+
+    .grid {
+      height: 350px;
+      font-family: monospace;
+      line-height: 1.0;
+      font-size: 14px;
+      letter-spacing: 1px
+    }
+
+    label {
+      display: flex;
+      gap: 8px;
+      align-items: center
+    }
+
+    input[type=range] {
+      width: 160px
+    }
+
+    footer {
+      margin-top: 12px;
+      font-size: 12px;
+      color: #90a4b7
+    }
+
+    select {
+      padding: 6px 10px;
+      border-radius: 6px;
+      border: 1px solid #4b5563;
+      background: #1b6ca8;
+      color: white
+    }
+
+    .visual-container {
+      width: 420px;
+      background: #0a0f1c;
+      padding: 8px;
+      border-radius: 8px;
+      overflow: auto;
+      border: 1px solid #133444;
+    }
+
+    .visual-row {
+      display: flex;
+      justify-content: center;
+      margin-bottom: 2px
+    }
+
+    .visual-cell {
+      width: 14px;
+      height: 14px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 10px;
+      font-weight: bold
+    }
+
+    .cell-0 {
+      color: #4a5568;
+      background: #1a202c
+    }
+
+    .cell-1 {
+      color: #68d391;
+      background: #22543d
+    }
+
+    .grid-title {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 6px
+    }
+
+    .grid-legend {
+      display: flex;
+      gap: 12px;
+      font-size: 12px
+    }
+
+    .legend-item {
+      display: flex;
+      align-items: center;
+      gap: 4px
+    }
+
+    .legend-color {
+      width: 10px;
+      height: 10px;
+      border-radius: 2px
+    }
+
+    .score-display {
+      font-size: 18px;
+      font-weight: bold;
+      color: #ffdd57;
+      margin-top: 8px
+    }
+  </style>
+</head>
+
+<body>
+  <h2 style="text-align: center;">Fly Bird</h2>
+  <div class="container">
+    <div class="tool-introduce"><b>简介：</b><br />玩家通过空格控制小鸟（黄色块）向上飞和自然下落。小鸟需穿过一系列上下排列的管道障碍物（绿色块）；视觉状态是将游戏画面做缩放和二值化处理后的游戏画面，也是AI会看到的画面；状态描述内包含小鸟的坐标位置以及管道的通道位置，小鸟的存活和穿过管道会得分</div>
+    <div class="ui">
+      <div style="position:relative;display:inline-block">
+        <canvas id="game" width="420" height="420"></canvas>
+        <div class="topright" id="meta">
+          <!-- 屏幕尺寸 & 状态将在这里显示 -->
+        </div>
+      </div>
+      <div class="controls">
+        <button id="startBtn">开始</button>
+        <button id="pauseBtn" class="secondary">暂停</button>
+        <button id="resetBtn" class="secondary">重置</button>
+        <button id="toggleAI">切换到 AI 控制</button>
+        <select id="aiLevel">
+          <option value="smart">聪明 AI</option>
+          <option value="medium">中等 AI</option>
+          <option value="dumb">较笨 AI</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="panel">
+      
+      <div class="visual-container">
+        <div><strong>视觉状态（简化 0/1）</strong></div>
+        <div class="grid-title">
+          <span>21×21 网格</span>
+          <div class="grid-legend">
+            <div class="legend-item">
+              <div class="legend-color" style="background:#22543d"></div>
+              <span>1 (障碍物)</span>
+            </div>
+            <div class="legend-item">
+              <div class="legend-color" style="background:#1a202c"></div>
+              <span>0 (背景)</span>
+            </div>
+          </div>
+        </div>
+        <div id="visual" class="grid"></div>
+        
+      </div>
+
+      <div class="status">
+        <div><strong>状态描述（实时）</strong></div>
+        <pre id="stateDesc">加载中...</pre>
+        <div class="score-display">得分: <span id="scoreVal">0</span></div>
+        <div style="margin-top:8px;display: none;"><strong>奖励值：</strong><span id="rewardVal">0</span></div>
+        <div style="margin-top:8px"><strong>AI 水平：</strong><span id="aiLevelText">聪明</span></div>
+        <div style="margin-top:8px"><strong>AI 决策：</strong><span id="aiDecisionText">-</span></div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // ----- Game parameters -----
+    const canvas = document.getElementById('game');
+    const ctx = canvas.getContext('2d');
+    const W = canvas.width, H = canvas.height;
+
+    // UI elements
+    const stateDescEl = document.getElementById('stateDesc');
+    const visualEl = document.getElementById('visual');
+    const rewardEl = document.getElementById('rewardVal');
+    const scoreEl = document.getElementById('scoreVal');
+    const metaEl = document.getElementById('meta');
+    const startBtn = document.getElementById('startBtn');
+    const pauseBtn = document.getElementById('pauseBtn');
+    const resetBtn = document.getElementById('resetBtn');
+    const toggleAIButton = document.getElementById('toggleAI');
+    const aiLevelSelect = document.getElementById('aiLevel');
+    const aiLevelText = document.getElementById('aiLevelText');
+    const aiDecisionText = document.getElementById('aiDecisionText');
+
+    metaEl.innerHTML = `画面尺寸: ${W}×${H}`;
+
+    // ----- Game state -----
+    let bird = { x: 80, y: H / 2, vy: 0, w: 28, h: 20 };
+    // 修改物理参数：重力0.7，跳跃速度-7
+    let gravity = 0.7, flapV = -7;
+    let pipes = []; // 每个 pipe: {x, gapY, gapH}
+    let frame = 0;
+    let score = 0;
+    let alive = true;
+    let playing = false;
+    let aiControl = false;
+    let reward = 0;
+    let aiLevel = 'smart'; // 默认聪明AI
+    let lastPipeDistance = 0; // 记录上一帧的管道距离
+
+    // ----- Visual downsample grid -----
+    const GRID_W = 21, GRID_H = 21; // 可调
+
+    // ----- Pipe generation -----
+    function spawnPipe() {
+      const gapH = 120;
+      const gapY = 80 + Math.random() * (H - 160 - gapH);
+      pipes.push({ x: W, gapY, gapH });
+    }
+
+    // ----- Reset -----
+    function resetGame() {
+      bird = { x: 80, y: H / 2, vy: 0, w: 28, h: 20 };
+      pipes = [];
+      frame = 0; score = 0; alive = true; reward = 0;
+      lastPipeDistance = 0;
+      for (let i = 0; i < 3; i++) { spawnPipe(); pipes[i].x += i * 180; }
+    }
+    resetGame();
+
+    // ----- Input -----
+    window.addEventListener('keydown', e => { if (e.code === 'Space') { if (!aiControl) flap(); e.preventDefault(); } });
+    canvas.addEventListener('mousedown', e => { if (!aiControl) flap(); });
+    function flap() { if (!alive) return; bird.vy = flapV; }
+
+    // ----- Collision -----
+    function checkCollision() {
+      for (const p of pipes) {
+        if (bird.x + bird.w > p.x && bird.x < p.x + 60) {
+          if (bird.y < p.gapY || bird.y + bird.h > p.gapY + p.gapH) return true;
+        }
+      }
+      if (bird.y < 0 || bird.y + bird.h > H) return true;
+      return false;
+    }
+
+    // ----- State description for UI -----
+    function getNextTwoPipes() {
+      const ahead = pipes.filter(p => p.x + 60 >= bird.x).sort((a, b) => a.x - b.x);
+      const p1 = ahead[0] || { x: Infinity, gapY: 0, gapH: 0 };
+      const p2 = ahead[1] || { x: Infinity, gapY: 0, gapH: 0 };
+      return [p1, p2];
+    }
+
+    function updateStateDesc() {
+      const [p1, p2] = getNextTwoPipes();
+      const dist1 = Math.round(p1.x - bird.x);
+      const dist2 = Math.round(p2.x - bird.x);
+      const desc = `小鸟位置: (${Math.round(bird.x)}, ${Math.round(bird.y)})\n` +
+        `通道1 距离: ${dist1}，坐标: X=${Math.round(p1.x)}, Y=${Math.round(p1.gapY)}\n` +
+        `通道2 距离: ${dist2}，坐标: X=${Math.round(p2.x)}, Y=${Math.round(p2.gapY)}\n`;// +
+        // `奖励值: ${reward.toFixed(3)}\n` +
+        // `游戏尺寸: ${W}×${H}`;
+      stateDescEl.textContent = desc;
+    }
+
+    // ----- Visual state: 二值化到 GRID_W x GRID_H -----
+    function getVisualGrid() {
+      // Draw to an offscreen canvas small, then check pixels of bird and pipes
+      const off = document.createElement('canvas'); off.width = GRID_W; off.height = GRID_H;
+      const octx = off.getContext('2d');
+      // Draw background as 0
+      octx.fillStyle = '#fff'; octx.fillRect(0, 0, off.width, off.height);
+      // Draw pipes as 1 (black)
+      octx.fillStyle = '#000';
+      for (const p of pipes) {
+        const scaleX = off.width / W; const scaleY = off.height / H;
+        const px = Math.round(p.x * scaleX);
+        const pw = Math.round(60 * scaleX);
+        const gy = Math.round(p.gapY * scaleY);
+        const gh = Math.round(p.gapH * scaleY);
+        // top
+        octx.fillRect(px, 0, pw, gy);
+        // bottom
+        octx.fillRect(px, gy + gh, pw, off.height - (gy + gh));
+      }
+      // Draw bird
+      octx.fillStyle = '#000';
+      octx.fillRect(Math.round(bird.x * off.width / W), Math.round(bird.y * off.height / H), Math.max(1, Math.round(bird.w * off.width / W)), Math.max(1, Math.round(bird.h * off.height / H)));
+      // read pixels and create 0/1 grid
+      const data = octx.getImageData(0, 0, off.width, off.height).data;
+      const grid = [];
+      for (let y = 0; y < off.height; y++) {
+        const row = [];
+        for (let x = 0; x < off.width; x++) {
+          const i = (y * off.width + x) * 4;
+          // black parts will have small r/g/b values
+          const v = data[i] < 128 || data[i + 1] < 128 || data[i + 2] < 128 ? 1 : 0;
+          row.push(v);
+        }
+        grid.push(row);
+      }
+      return grid;
+    }
+
+    function displayVisualGrid(grid) {
+      // 创建可视化的网格元素
+      let html = '';
+      for (let y = 0; y < grid.length; y++) {
+        html += '<div class="visual-row">';
+        for (let x = 0; x < grid[y].length; x++) {
+          const cellValue = grid[y][x];
+          html += `<div class="visual-cell cell-${cellValue}">${cellValue}</div>`;
+        }
+        html += '</div>';
+      }
+      visualEl.innerHTML = html;
+    }
+
+    // ----- Rendering -----
+    function render() {
+      // background
+      ctx.fillStyle = '#70c5ce'; ctx.fillRect(0, 0, W, H);
+      // pipes
+      ctx.fillStyle = '#0b5136';
+      for (const p of pipes) {
+        ctx.fillRect(p.x, 0, 60, p.gapY);
+        ctx.fillRect(p.x, p.gapY + p.gapH, 60, H - (p.gapY + p.gapH));
+      }
+      // bird
+      ctx.fillStyle = '#ffdd57';
+      ctx.fillRect(bird.x, bird.y, bird.w, bird.h);
+      // score
+      ctx.fillStyle = 'rgba(0,0,0,0.5)'; ctx.font = '22px monospace'; ctx.fillText('Score: ' + score.toFixed(1), 12, 28);
+    }
+
+    // ----- Physics and step -----
+    function step(dt = 1) {
+      if (!alive) return;
+      frame++;
+
+      // 计算前进的距离
+      const pipeSpeed = 2.2;
+      const distanceMoved = pipeSpeed * dt;
+
+      // update pipes
+      for (const p of pipes) p.x -= pipeSpeed * dt;
+      if (pipes[0].x < -80) { pipes.shift(); spawnPipe(); }
+
+      // bird
+      bird.vy += gravity * dt;
+      bird.y += bird.vy * dt;
+
+      // 修改奖励机制：每前进一格距离得0.1分
+      // 我们使用管道移动的距离作为前进距离的度量
+      score += distanceMoved * 0.1;
+      reward = distanceMoved * 0.1;
+
+      // 检查是否通过管道
+      for (const p of pipes) {
+        if (!p._passed && p.x + 60 < bird.x) {
+          p._passed = true;
+          score += 1.0; // 成功穿过一根管道得1分
+          reward = 1.0; // 设置奖励为1分
+        }
+      }
+
+      // 检查碰撞
+      if (checkCollision()) {
+        alive = false;
+        reward = -1.0; // 发生碰撞得-1分
+      }
+
+      // 更新分数显示
+      scoreEl.textContent = score.toFixed(1);
+    }
+
+    // ----- 模拟AI：聪明、中等、较笨三个水平 -----
+    function actSimulatedAI() {
+      const [p1] = getNextTwoPipes();
+      if (!p1 || !isFinite(p1.x)) return 0;
+
+      const center = p1.gapY + p1.gapH / 2;
+      const dx = p1.x - bird.x;
+      const dy = bird.y - center; // 正数表示小鸟在中心上方，负数表示在下方
+
+      let decision = 0;
+      let reason = "";
+
+      switch (aiLevel) {
+        case 'smart':
+          // 聪明AI：准确判断距离和位置，及时跳跃
+          if (dx < 110 && dy > -6) { // 接近且位置偏高
+            decision = 1;
+            reason = "接近通道且位置偏高，跳跃";
+          } else if (bird.vy > 4 && dy > -18) { // 下落速度快且位置偏高
+            decision = 1;
+            reason = "下落速度快，紧急跳跃";
+          } else {
+            reason = "保持飞行";
+          }
+          break;
+
+        case 'medium':
+          // 中等AI：有时会判断错误，反应稍慢
+          if (dx < 90 && dy > -10) { // 距离更近才跳跃
+            decision = 1;
+            reason = "接近通道，跳跃";
+          } else if (bird.vy > 6 && dy > -15) { // 需要更快的下落速度才跳跃
+            decision = 1;
+            reason = "下落速度很快，跳跃";
+          } else if (Math.random() < 0.01) { // 1%概率随机跳跃
+            decision = 1;
+            reason = "随机跳跃";
+          } else {
+            reason = "保持飞行";
+          }
+          break;
+
+        case 'dumb':
+          // 较笨AI：经常判断错误，反应慢，随机跳跃
+          if (dx < 70 && dy > -5) { // 非常接近才跳跃
+            decision = 1;
+            reason = "非常接近通道，跳跃";
+          } else if (bird.vy > 8 && dy > -10) { // 需要极快的下落速度才跳跃
+            decision = 1;
+            reason = "下落速度极快，跳跃";
+          } else if (Math.random() < 0.03) { // 3%概率随机跳跃
+            decision = 1;
+            reason = "随机跳跃";
+          } else if (Math.random() < 0.02 && dx > 150) { // 2%概率过早跳跃
+            decision = 1;
+            reason = "过早跳跃";
+          } else {
+            reason = "保持飞行";
+          }
+          break;
+      }
+
+      aiDecisionText.textContent = reason;
+      return decision;
+    }
+
+    // ----- Main loop -----
+    let loopId = null;
+    function gameLoop() {
+      if (playing) {
+        // if AI control is on, compute action here synchronously (but may be async)
+        if (aiControl && alive) {
+          const a = actSimulatedAI();
+          if (a === 1) bird.vy = flapV;
+        }
+        step(1);
+        render();
+        updateStateDesc();
+        const grid = getVisualGrid();
+        displayVisualGrid(grid);
+        rewardEl.textContent = reward.toFixed(3);
+      }
+      
+    }
+
+    // gameLoop();
+    loopId = createRafFps(gameLoop);
+
+    function createRafFps(fn, fps = 30) {
+      let rafId = 0;
+      let last = 0;
+      const interval = 1000 / fps;
+
+      function loop(timestamp) {
+        if (timestamp - last >= interval) {
+          last = timestamp;
+          fn(timestamp);
+        }
+        rafId = requestAnimationFrame(loop);
+      }
+
+      rafId = requestAnimationFrame(loop);
+
+      return () => cancelAnimationFrame(rafId);
+    }
+
+    // ----- Buttons -----
+    startBtn.onclick = () => { playing = true; if (!alive) resetGame(); };
+    pauseBtn.onclick = () => { playing = !playing; pauseBtn.textContent = playing ? '暂停' : '继续'; };
+    resetBtn.onclick = () => { resetGame(); };
+    toggleAIButton.onclick = () => {
+      aiControl = !aiControl;
+      toggleAIButton.textContent = aiControl ? '切换到 人控' : '切换到 AI 控制';
+    };
+
+    // AI水平选择
+    aiLevelSelect.addEventListener('change', function () {
+      aiLevel = this.value;
+      aiLevelText.textContent = this.options[this.selectedIndex].text;
+    });
+
+    // 暴露到调试对象
+    window._dbg = { actSimulatedAI };
+
+  </script>
+</body>
+
+</html>

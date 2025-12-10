@@ -1,0 +1,7 @@
+<xml xmlns="https://developers.google.com/blockly/xml">
+  <block type="env_bcst_init" id="W,)g28D8tG*UYdg=RnLV" x="163" y="37">
+    <next>
+      <block type="env_bcst_img_analyze" id="-pN*sc?yAzDL7/+tXlro"></block>
+    </next>
+  </block>
+</xml>

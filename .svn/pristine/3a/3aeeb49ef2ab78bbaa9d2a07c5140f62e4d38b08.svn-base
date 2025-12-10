@@ -1,0 +1,668 @@
+<!doctype html>
+<html lang="zh-CN">
+
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Q-Learning R表定制版 (限制编辑)</title>
+  <style>
+    :root {
+      --bg: #0f1724;
+      --panel: #0b1220;
+      --accent: #06b6d4;
+      --muted: #94a3b8
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html,
+    body {
+      height: 100%;
+      margin: 0;
+      font-family: Inter, ui-sans-serif, system-ui, Segoe UI, Roboto, 'Helvetica Neue', Arial
+    }
+
+    body {
+      background: linear-gradient(180deg, #071025 0%, #081428 100%);
+      color: #e6eef6;
+      padding: 24px
+    }
+
+    .panel {
+      background: var(--panel);
+      padding: 18px;
+      border-radius: 12px;
+      box-shadow: 0 8px 30px rgba(2, 6, 23, 0.6)
+    }
+
+    h1 {
+      margin: 0 0 12px 0;
+      font-size: 18px
+    }
+
+    .controls {
+      display: flex;
+      flex-direction: column;
+      gap: 12px
+    }
+
+    .row {
+      display: flex;
+      align-items: center;
+      gap: 10px
+    }
+
+    label {
+      font-size: 13px;
+      color: var(--muted);
+      min-width: 120px
+    }
+
+    input[type=range] {
+      flex: 1
+    }
+
+    button {
+      background: linear-gradient(90deg, var(--accent), #3b82f6);
+      border: 0;
+      padding: 8px 12px;
+      border-radius: 8px;
+      color: #042028;
+      cursor: pointer;
+      font-weight: 600
+    }
+
+    button.secondary {
+      background: transparent;
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      color: var(--muted);
+      font-weight: 600
+    }
+
+    .small {
+      font-size: 13px;
+      color: var(--muted)
+    }
+
+    canvas {
+      background: linear-gradient(180deg, #0b1220, #071026);
+      border-radius: 12px;
+      display: block
+    }
+
+    .footer {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 8px;
+      flex-direction: column;
+    }
+
+    .meta {
+      font-size: 13px;
+      color: var(--muted);
+      margin-bottom: 10px;
+    }
+
+    .legend {
+      display: flex;
+      gap: 8px;
+      align-items: center
+    }
+
+    .legend .box {
+      width: 18px;
+      height: 18px;
+      border-radius: 4px
+    }
+
+    .tips {
+      font-size: 12px;
+      color: #999;
+      margin: 0 auto;
+    }
+
+    /* R-Table Styles */
+    .R-table {
+      width: 300px;
+      height: 300px;
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      grid-template-rows: repeat(3, 1fr);
+      gap: 4px;
+      border-radius: 4px;
+    }
+
+    .R-table>div {
+      background-color: #1e293b;
+      padding: 0;
+      border-radius: 4px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      transition: all 0.2s;
+    }
+
+    /* 可编辑状态 */
+    .R-table>div:hover:not(.readonly) {
+      border: 1px solid var(--accent);
+    }
+
+    /* 只读状态 (起点、终点、陷阱) */
+    .R-table>div.readonly {
+      background-color: #0f1724;
+      /* 更暗 */
+      opacity: 0.8;
+    }
+
+    .R-table>div.readonly input {
+      cursor: not-allowed;
+      color: #64748b;
+      /* 灰色字 */
+      font-weight: bold;
+    }
+
+    /* 特殊边框 */
+    .R-table>div.is-goal {
+      border: 1px solid #059669;
+      box-shadow: inset 0 0 10px rgba(5, 150, 105, 0.2);
+    }
+
+    .R-table>div.is-trap {
+      border: 1px solid #b91c1c;
+      box-shadow: inset 0 0 10px rgba(185, 28, 28, 0.2);
+    }
+
+    .R-table>div.is-start {
+      border: 1px solid #0369a1;
+    }
+
+    .R-table>div>input {
+      width: 100%;
+      height: 100%;
+      font-size: 16px;
+      text-align: center;
+      border-radius: 4px;
+      color: #e6eef6;
+      background: transparent;
+      border: none;
+      outline: none;
+      font-family: monospace;
+    }
+
+    .R-table>div>input:focus {
+      background: rgba(255, 255, 255, 0.1);
+      color: #fff;
+    }
+
+    .info {
+      width: 100%;
+      text-align: center;
+      margin-bottom: 20px;
+    }
+
+    .container {
+      width: 1300px;
+      max-width: 100%;
+      padding: 40px 0;
+      margin: 0 auto;
+      display: flex;
+    }
+
+    .content {
+      width: 100%;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: flex-start;
+      justify-content: space-between;
+    }
+
+    .tool-introduce {
+      min-width: 100px;
+      max-width: 200px;
+      font-size: 16px;
+      color: #ccc;
+      padding-right: 20px;
+      padding-top: 76px;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="container">
+    <div class="tool-introduce"><b>简介：</b><br /><br />Q-learning 是一种 无模型（Model-Free） 的
+      强化学习算法。<br /><br /><b>规则更新：</b><br />起点、终点和陷阱的奖励是<b>固定</b>的（不可编辑）。<br /><br />你可以修改<b>普通空白格子</b>的奖励值（例如设为 -1
+      制造人工障碍），小于-1的值会被认为是陷阱、大于等于1的值被认为是终点。</div>
+    <div class="content">
+      <div class="info">
+        <h1>Q-Learning 演示 (R表限定编辑)</h1>
+      </div>
+      <div class="panel" style="flex: 1;">
+        <div class="controls">
+          <div>
+            <div class="row"><label>学习率 α</label><span id="alphaVal" class="small">0.5</span></div>
+            <input id="alpha" type="range" min="0" max="1" step="0.01" value="0.5" />
+            <p class="tips">决定了新信息覆盖旧信息的程度</p>
+          </div>
+          <div>
+            <div class="row"><label>折扣因子 γ</label><span id="gammaVal" class="small">0.9</span></div>
+            <input id="gamma" type="range" min="0" max="0.999" step="0.001" value="0.9" />
+            <p class="tips">决定了对未来奖励的重视程度</p>
+          </div>
+          <div>
+            <div class="row"><label>探索率 ε</label><span id="epsilonVal" class="small">0.1</span></div>
+            <input id="epsilon" type="range" min="0" max="1" step="0.01" value="0.1" />
+            <p class="tips">决定了随机探索的可能性</p>
+          </div>
+          <div>
+            <div class="row"><label>速度 (ms)</label><span id="speedVal" class="small">50</span></div>
+            <input id="speed" type="range" min="1" max="200" step="1" value="50" />
+            <p class="tips">训练播放速度</p>
+          </div>
+
+          <div style="display:flex;gap:8px;flex-wrap:wrap">
+            <button id="start">开始训练</button>
+            <button id="pause" class="secondary">暂停</button>
+            <button id="step" class="secondary">单步</button>
+            <button id="reset" class="secondary">重置 Q 表</button>
+            <button id="randomize" class="secondary">随机障碍</button>
+          </div>
+
+          <div class="footer">
+            <div class="meta">回合: <span id="episode">0</span> · 步数: <span id="steps">0</span></div>
+            <div class="legend">
+              <div style="display:flex;gap:6px;align-items:center">
+                <div class="box" style="background:#0369a1"></div>
+                <div class="small">起点</div>
+                <div class="box" style="background:#059669"></div>
+                <div class="small">目标</div>
+                <div class="box" style="background:#b91c1c"></div>
+                <div class="small">陷阱</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="panel" style="width: 356px;display:flex;flex-direction:column;gap:10px;">
+        <canvas id="grid" width="320" height="320"></canvas>
+        <div>
+          <div class="small">左上为 (0,0)。显示的数值为该状态最大 Q 值。</div>
+        </div>
+      </div>
+
+      <div class="panel">
+        <div class="R-table" id="rTableContainer">
+          <div><input type="text"></div>
+          <div><input type="text"></div>
+          <div><input type="text"></div>
+          <div><input type="text"></div>
+          <div><input type="text"></div>
+          <div><input type="text"></div>
+          <div><input type="text"></div>
+          <div><input type="text"></div>
+          <div><input type="text"></div>
+        </div>
+        <p class="tips" style="margin: 10px auto; text-align:center;">R-表 (仅白色文字区域可修改)</p>
+      </div>
+    </div>
+  </div>
+  <script>
+    // ==== 参数与环境定义 ====
+    const rows = 3;
+    const cols = 3;
+    const startPos = { r: rows - 1, c: 0 };
+    let goalPos = { r: 0, c: cols - 1 };
+    let traps = [{ r: 2, c: 2 }, { r: 3, c: 4 }]; // 初始陷阱
+    const maxStepsPerEpisode = 200;
+
+    let alpha = parseFloat(document.getElementById('alpha').value);
+    let gamma = parseFloat(document.getElementById('gamma').value);
+    let epsilon = parseFloat(document.getElementById('epsilon').value);
+    let speed = parseInt(document.getElementById('speed').value, 10);
+
+    // Q 表
+    let Q = new Float32Array(rows * cols * 4);
+    // R 表
+    let R_values = new Float32Array(rows * cols);
+
+    function qIndex(s, a) { return s * 4 + a }
+    function stateIndex(r, c) { return r * cols + c }
+
+    const ACTIONS = [{ dr: -1, dc: 0 }, { dr: 0, dc: 1 }, { dr: 1, dc: 0 }, { dr: 0, dc: -1 }];
+
+    function isTerminal(r, c) {
+      if (r === goalPos.r && c === goalPos.c) return true;
+      for (let t of traps) if (t.r === r && t.c === c) return true;
+      return false;
+    }
+
+    function rewardFor(r, c) {
+      return R_values[stateIndex(r, c)];
+    }
+
+    // ==== 核心修改：初始化与UI同步 ====
+
+    // 1. 设置默认值并锁定特殊位置
+    function resetRValuesToDefault() {
+      for (let r = 0; r < rows; r++) {
+        for (let c = 0; c < cols; c++) {
+          let idx = stateIndex(r, c);
+          let val = -0.01; // 默认路径惩罚
+          if (r === goalPos.r && c === goalPos.c) val = 1.0;
+          else {
+            for (let t of traps) if (t.r === r && t.c === c) val = -1.0;
+          }
+          R_values[idx] = val;
+        }
+      }
+      syncRTableUI(); // 数据 -> UI
+    }
+
+    // 2. UI 同步逻辑（处理只读、提示和样式）
+    const rInputs = document.querySelectorAll('.R-table input');
+    const rDivs = document.querySelectorAll('.R-table > div');
+
+    function syncRTableUI() {
+      for (let i = 0; i < rInputs.length; i++) {
+        let r = Math.floor(i / cols);
+        let c = i % cols;
+
+        // 检查是否为特殊格子
+        let isGoal = (r === goalPos.r && c === goalPos.c);
+        let isStart = (r === startPos.r && c === startPos.c);
+        let isTrap = false;
+        for (let t of traps) if (t.r === r && t.c === c) isTrap = true;
+
+        // 是否只读
+        let isReadOnly = isGoal || isStart || isTrap;
+
+        // 清除旧样式
+        rDivs[i].className = '';
+        rInputs[i].readOnly = isReadOnly;
+
+        // 设置值 (保留4位小数显示，如果整数则不显示小数)
+        let val = R_values[i];
+        // 简单格式化：如果是整数显示整数，否则显示最多4位
+        rInputs[i].value = Number.isInteger(val) ? val : parseFloat(val.toFixed(4));
+
+        // 添加样式类
+        if (isReadOnly) rDivs[i].classList.add('readonly');
+        if (isGoal) rDivs[i].classList.add('is-goal');
+        if (isTrap) rDivs[i].classList.add('is-trap');
+        if (isStart) rDivs[i].classList.add('is-start');
+
+        // 设置 Tooltip (title 属性)
+        if (isReadOnly) {
+          let typeText = isGoal ? "目标" : (isTrap ? "陷阱" : "起点");
+          rDivs[i].title = `${typeText}：固定值，不可修改`;
+        } else {
+          rDivs[i].title = `值越大，此处越容易被选择作为下一步行动。`;
+        }
+      }
+    }
+
+    // 3. 绑定输入事件：限制范围和精度
+    rInputs.forEach((input, index) => {
+      input.onchange = (e) => {
+        // 如果是只读的，理论上无法触发 change，但为了安全起见
+        if (input.readOnly) return;
+
+        let val = parseFloat(e.target.value);
+        if (isNaN(val)) val = -0.01; // 非法输入恢复默认
+
+        // 格式化：保留4位小数
+        val = parseFloat(val.toFixed(4));
+
+        // 范围限制建议 (虽然Q学习不强制限制，但为了演示效果防止溢出)
+        // 这里不做强制截断，只做格式化，因为用户可能想测试 -100
+        // 但为了UI显示美观，如果太大可以做提示，这里仅处理精度
+
+        R_values[index] = val;
+        input.value = val; // 回填格式化后的值
+
+        // 实时重绘
+        render();
+      };
+    });
+
+
+    // ==== DOM 控件挂载 ====
+    const alphaEl = document.getElementById('alpha');
+    const gammaEl = document.getElementById('gamma');
+    const epsilonEl = document.getElementById('epsilon');
+    const speedEl = document.getElementById('speed');
+    const alphaVal = document.getElementById('alphaVal');
+    const gammaVal = document.getElementById('gammaVal');
+    const epsilonVal = document.getElementById('epsilonVal');
+    const speedVal = document.getElementById('speedVal');
+    const episodeEl = document.getElementById('episode');
+    const stepsEl = document.getElementById('steps');
+
+    alphaEl.oninput = () => { alpha = parseFloat(alphaEl.value); alphaVal.textContent = alpha.toFixed(2) };
+    gammaEl.oninput = () => { gamma = parseFloat(gammaEl.value); gammaVal.textContent = gamma.toFixed(3) };
+    epsilonEl.oninput = () => { epsilon = parseFloat(epsilonEl.value); epsilonVal.textContent = epsilon.toFixed(2) };
+    speedEl.oninput = () => { speed = parseInt(speedEl.value, 10); speedVal.textContent = speed }
+
+    alphaVal.textContent = alpha.toFixed(2);
+    gammaVal.textContent = gamma.toFixed(3);
+    epsilonVal.textContent = epsilon.toFixed(2);
+    speedVal.textContent = speed;
+
+    // 控制按钮
+    const startBtn = document.getElementById('start');
+    const pauseBtn = document.getElementById('pause');
+    const stepBtn = document.getElementById('step');
+    const resetBtn = document.getElementById('reset');
+    const randomBtn = document.getElementById('randomize');
+
+    let training = false;
+    let episodeCount = 0;
+    let currentEpisodeSteps = 0;
+    let trainTimer = null;
+
+    startBtn.onclick = () => { if (!training) startTraining(); };
+    pauseBtn.onclick = () => { stopTraining(); };
+    stepBtn.onclick = async () => { await runOneEpisode(); render(); };
+    resetBtn.onclick = () => { resetQ(); render(); };
+    randomBtn.onclick = () => { randomizeTraps(); render(); }
+
+    // ==== Q-learning 算法实现 ====
+    function resetQ() {
+      Q = new Float32Array(rows * cols * 4);
+      episodeCount = 0;
+      currentEpisodeSteps = 0;
+      episodeEl.textContent = episodeCount;
+      stepsEl.textContent = currentEpisodeSteps
+    }
+
+    function sampleAction(s) {
+      if (Math.random() < epsilon) return Math.floor(Math.random() * 4);
+      let base = s * 4;
+      let bestA = 0; let bestV = Q[base + 0];
+      for (let a = 1; a < 4; a++) { let v = Q[base + a]; if (v > bestV) { bestV = v; bestA = a } };
+      return bestA;
+    }
+
+    function maxQofState(s) {
+      let base = s * 4; let m = Q[base];
+      for (let a = 1; a < 4; a++) { if (Q[base + a] > m) m = Q[base + a]; }
+      return m;
+    }
+
+    function stepEnvironment(r, c, action) {
+      const move = ACTIONS[action];
+      let nr = r + move.dr; let nc = c + move.dc;
+      if (nr < 0) nr = 0; if (nr >= rows) nr = rows - 1;
+      if (nc < 0) nc = 0; if (nc >= cols) nc = cols - 1;
+      return { r: nr, c: nc };
+    }
+
+    async function runOneEpisode() {
+      let r = startPos.r; let c = startPos.c;
+      currentEpisodeSteps = 0;
+      for (let step = 0; step < maxStepsPerEpisode; step++) {
+        currentEpisodeSteps = step + 1; stepsEl.textContent = currentEpisodeSteps;
+        let s = stateIndex(r, c);
+
+        let isTerm = isTerminal(r, c);
+        // 逻辑：如果当前就在终点/陷阱（上一轮刚走到），在这一轮开始时判定结束，
+        // 但为了可视化连贯性，我们在走到终点的那一步更新Q值后Break。
+
+        let a = sampleAction(s);
+        let next = stepEnvironment(r, c, a);
+        let nr = next.r, nc = next.c;
+        let ns = stateIndex(nr, nc);
+
+        let rew = rewardFor(nr, nc);
+        let nextIsTerm = isTerminal(nr, nc);
+
+        let idx = qIndex(s, a);
+        let tdTarget = rew + gamma * (nextIsTerm ? 0 : maxQofState(ns));
+        let tdErr = tdTarget - Q[idx];
+        Q[idx] = Q[idx] + alpha * tdErr;
+
+        r = nr; c = nc;
+        if (nextIsTerm) break;
+      }
+      episodeCount += 1; episodeEl.textContent = episodeCount;
+    }
+
+    function startTraining() {
+      if (training) return;
+      training = true;
+      startBtn.disabled = true;
+      pauseBtn.disabled = false;
+      trainTimer = setInterval(async () => {
+        await runOneEpisode();
+        render();
+      }, Math.max(1, speed));
+    }
+    function stopTraining() {
+      training = false;
+      startBtn.disabled = false;
+      pauseBtn.disabled = true;
+      if (trainTimer) { clearInterval(trainTimer); trainTimer = null; }
+    }
+
+    function randomizeTraps() {
+      traps = [];
+      const count = 1; // 1个随机陷阱
+      while (traps.length < count) {
+        let rr = Math.floor(Math.random() * rows);
+        let cc = Math.floor(Math.random() * cols);
+        if ((rr === startPos.r && cc === startPos.c) || (rr === goalPos.r && cc === goalPos.c)) continue;
+        if (!traps.find(t => t.r === rr && t.c === cc)) traps.push({ r: rr, c: cc });
+      }
+      // 关键：重置R表并同步UI锁定状态
+      resetRValuesToDefault();
+      resetQ();
+    }
+
+    // ==== 可视化渲染 ====
+    const canvas = document.getElementById('grid');
+    const ctx = canvas.getContext('2d');
+    const W = canvas.width; const H = canvas.height;
+    const cellW = W / cols; const cellH = H / rows;
+
+    function render() {
+      ctx.clearRect(0, 0, W, H);
+      let maxQ = -Infinity, minQ = Infinity;
+      for (let s = 0; s < rows * cols; s++) {
+        for (let a = 0; a < 4; a++) { let v = Q[qIndex(s, a)]; if (v > maxQ) maxQ = v; if (v < minQ) minQ = v }
+      }
+      if (!isFinite(maxQ)) { maxQ = 1; minQ = -1 }
+      if (maxQ === minQ) { maxQ = minQ + 1 }
+
+      for (let r = 0; r < rows; r++) {
+        for (let c = 0; c < cols; c++) {
+          const x = c * cellW; const y = r * cellH;
+          let s = stateIndex(r, c);
+          let m = maxQofState(s);
+          let t = (m - minQ) / (maxQ - minQ);
+
+          let color;
+          if (t >= 0.5) {
+            let tt = (t - 0.5) * 2;
+            let g = Math.round(120 + tt * 80);
+            let b = Math.round(60 + (1 - tt) * 60);
+            color = `rgb(0,${g},${b})`;
+          } else {
+            let tt = t * 2;
+            let rcol = Math.round(20 + (1 - tt) * 10);
+            let g = Math.round(40 + tt * 40);
+            color = `rgb(${rcol},${g},60)`;
+          }
+          ctx.fillStyle = color;
+          ctx.fillRect(x + 2, y + 2, cellW - 4, cellH - 4);
+
+          // 特殊方块
+          if (r === startPos.r && c === startPos.c) { ctx.fillStyle = '#0369a1'; ctx.fillRect(x + 6, y + 6, cellW - 12, cellH - 12); }
+          if (r === goalPos.r && c === goalPos.c) { ctx.fillStyle = '#059669'; ctx.fillRect(x + 6, y + 6, cellW - 12, cellH - 12) }
+          for (let tpos of traps) { if (tpos.r === r && tpos.c === c) { ctx.fillStyle = '#b91c1c'; ctx.fillRect(x + 6, y + 6, cellW - 12, cellH - 12) } }
+
+          ctx.strokeStyle = 'rgba(255,255,255,0.05)'; ctx.lineWidth = 1;
+          ctx.strokeRect(x + 0.5, y + 0.5, cellW, cellH);
+
+          if (!isTerminal(r, c)) {
+            let base = s * 4; let bestA = 0; let bestV = Q[base + 0];
+            for (let a = 1; a < 4; a++) { if (Q[base + a] > bestV) { bestV = Q[base + a]; bestA = a } }
+
+            const cx = x + cellW / 2, cy = y + cellH / 2;
+            drawArrow(cx, cy, bestA);
+
+            ctx.font = Math.round(cellW * 0.12) + 'px sans-serif';
+            ctx.fillStyle = 'rgba(255,255,255,0.85)';
+            ctx.textAlign = 'center'; ctx.textBaseline = 'bottom';
+            ctx.fillText(bestV.toFixed(2), cx, y + cellH - 8);
+            if (r === startPos.r && c === startPos.c) {
+              fillTextWithNewlines(ctx, '\n（起点）', x + cellW / 2, y + cellH / 2)
+            }
+          } else {
+            let currentR = R_values[s];
+            ctx.font = Math.round(cellW * 0.16) + 'px sans-serif';
+            ctx.fillStyle = '#fff'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+
+            let label = "T";
+            if (r === goalPos.r && c === goalPos.c) label = "终点";
+            else label = "陷阱";
+
+            let rText = currentR > 0 ? `+${currentR}` : `${currentR}`;
+            fillTextWithNewlines(ctx, `${rText}\n（${label}）`, x + cellW / 2, y + cellH / 2)
+          }
+        }
+      }
+    }
+
+    function fillTextWithNewlines(ctx, text, x, y, lineHeight = 24) {
+      const lines = text.split('\n');
+      lines.forEach((line, i) => {
+        ctx.fillText(line, x, y + i * lineHeight);
+      });
+    }
+
+    function drawArrow(cx, cy, action) {
+      ctx.save();
+      ctx.translate(cx, cy);
+      let angle = 0;
+      if (action === 0) angle = -Math.PI / 2;
+      if (action === 1) angle = 0;
+      if (action === 2) angle = Math.PI / 2;
+      if (action === 3) angle = Math.PI;
+      ctx.rotate(angle);
+      ctx.beginPath(); ctx.moveTo(-6, 0); ctx.lineTo(6, 0); ctx.strokeStyle = 'rgba(255,255,255,0.95)'; ctx.lineWidth = 2; ctx.stroke();
+      ctx.beginPath(); ctx.moveTo(6, 0); ctx.lineTo(2, -4); ctx.lineTo(2, 4); ctx.closePath(); ctx.fillStyle = 'rgba(255,255,255,0.95)'; ctx.fill();
+      ctx.restore();
+    }
+
+    // 首次初始化 (必须在 DOM 加载后)
+    randomizeTraps();
+    render()
+
+    window.addEventListener('beforeunload', () => { if (trainTimer) clearInterval(trainTimer) });
+  </script>
+</body>
+
+</html>

@@ -1,0 +1,15 @@
+import mainToolBox from './main';
+import dqnToolbox from './dqn';
+import envBcstToolbox from './env_bcst';
+
+
+
+export default function (data) {
+  const toolbox = `
+  <xml>
+    ${dqnToolbox(data)}
+    ${envBcstToolbox(data)}
+    ${mainToolBox}
+  </xml>`
+  return toolbox;
+};

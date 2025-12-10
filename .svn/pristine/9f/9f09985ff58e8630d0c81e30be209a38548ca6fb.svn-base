@@ -1,0 +1,31 @@
+.vue-ace-editor {
+  width: 100%;
+  height: 100%;
+  color: #666;
+  font-size: 14px;
+}
+.vue-ace-editor .ace_gutter {
+  background: #E2E4E5;
+  color: #999999;
+}
+.vue-ace-editor .ace_gutter-active-line {
+  background-color: #c6c6c6;
+}
+.vue-ace-editor .ace_storage, .vue-ace-editor .ace_keyword, .vue-ace-editor .ace_meta.ace_tag {
+  color: #1121ff;
+}
+.vue-ace-editor .ace_constant.ace_numeric {
+  color: #FF550A;
+}
+.vue-ace-editor .ace_marker-layer .ace_active-line {
+  background: #c9ebff;
+}
+.vue-ace-editor .ace_marker-layer .ace_selection {
+  background: #aed1ff;
+}
+.vue-ace-editor .ace_cursor {
+  color: #FF9900;
+}
+.vue-ace-editor .ace_print-margin {
+  width: 0;
+}

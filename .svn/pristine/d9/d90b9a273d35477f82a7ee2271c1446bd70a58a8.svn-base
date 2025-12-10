@@ -1,0 +1,134 @@
+.container {
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  background-color: #fff;
+  padding: 40px;
+  border-radius: 4px;
+}
+.head {
+  width: 100%;
+  border-bottom: #333 solid 1px;
+  padding-bottom: 20px;
+  margin-bottom: 20px;
+}
+.head button {
+  padding: 4px 12px;
+  cursor: pointer;
+}
+.tool-introduce {
+  width: 16%;
+  font-size: 16px;
+  color: #000;
+  padding-right: 20px;
+}
+.content {
+  width: 100%;
+  display: flex;
+}
+.score-container {
+  width: 100%;
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+}
+.score-top {
+  width: 100%;
+  margin-bottom: 20px;
+}
+.score-top button {
+  padding: 4px 12px;
+  cursor: pointer;
+}
+.score-top button[disabled] {
+  cursor: no-drop;
+}
+
+.score-box {
+  flex: 1;
+  margin-right: 40px;
+}
+.score-box > h4 {
+  font-size: 16px;
+  color: #333;
+  font-weight: 400;
+  margin-bottom: 10px;
+}
+.score-board {
+  width: 200px;
+  height: 200px;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  grid-template-rows: repeat(3, 1fr);
+  gap: 10px;
+  background-color: #bbb;
+  padding: 10px;
+  border-radius: 4px;
+  position: relative;
+  margin-bottom: 30px;
+}
+.score-board .item {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #eee;
+  border-radius: 4px;
+  cursor: pointer;
+}
+.score-board .item.disabled {
+  cursor: default;
+}
+.score-board .item:not(.disabled):hover {
+  background-color: #fff;
+}
+.score {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  position: absolute;
+  background-color: rgba(0, 0, 0, 0.4);
+  box-shadow: 0px 0px 4px #333;
+  z-index: 9;
+  top: 0;
+  left: 0;
+}
+.score span {
+  width: 80px;
+  height: 32px;
+  text-align: center;
+  line-height: 32px;
+  border-radius: 4px;
+  background-color: #eee;
+  color: #333;
+  margin: 5px 0;
+  cursor: pointer;
+}
+.score span:hover {
+  background-color: #fff;
+}
+.score-box .btn {
+  width: 230px;
+  height: 60px;
+  font-size: 18px;
+  color: #fff;
+  border-radius: 4px;
+  background-color: #f66;
+  border-color: #f00;
+  outline: none;
+  cursor: pointer;
+}
+.score-box .btn[disabled] {
+  cursor: no-drop;
+  opacity: 0.5;
+}
+.score-box .btn:not([disabled]):hover {
+  background-color: #f44;
+}
+
+.board-box {
+  width: 560px;
+  height: 560px;
+}

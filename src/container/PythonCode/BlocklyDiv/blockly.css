@@ -1,0 +1,755 @@
+.blocklyTreeIcon {
+  width: 50px;
+  height: calc(100% - 1px);
+  background: url(./block_icon/main.png) no-repeat center;
+}
+.blocklyToolboxDiv {
+  background: #fff;
+  border-right:1px solid rgba(238,238,238,1);
+  z-index: 10;
+}
+.blocklySvg {
+  background-color: #F6F9FF;
+}
+.blocklyTreeLabel {
+  min-width: 82px;
+  padding-right: 20px;
+  display: inline-block;
+}
+.blocklyTreeLabel-r {
+  color: #FF5700;
+}
+.blocklyTreeSelected>.blocklyTreeLabel-r {
+  color: #fff;
+}
+.blocklyTreeLabel-b {
+  color: #008CFF;
+}
+.blocklyTreeSelected>.blocklyTreeLabel-b {
+  color: #fff;
+}
+
+.blocklyTreeRow {
+  height: 30px;
+  margin-bottom: 0;
+  position: relative;
+}
+.blocklyTreeRow:after {
+  content: "";
+  width: 100%;
+  height: 0px;
+  border-bottom:1px solid rgba(238,238,238,1);
+  position: absolute;
+  bottom: 0;
+  left: 0;
+}
+.blocklyHidden {
+  display: none;
+}
+.blocklyTreeRoot {
+  padding: 0;
+}
+.blocklyTreeSeparator {
+  margin: 0;
+  height: 10px;
+  background: #E2E2E2;
+}
+.canOpen .blocklyTreeRow {
+  padding-left: 0 !important;
+}
+.blocklyBlockDragSurface {
+  z-index: 90;
+}
+.blocklyFlyout {
+  border-right: 1px solid #b9aeae;
+  border-width: 1px 1px 1px 0;
+  box-sizing: border-box;
+}
+.blocklyWidgetDiv {
+  z-index: 21;
+}
+.blocklyWidgetDiv .goog-menu {
+  z-index: 21;
+}
+#blocklyDiv .blocklyFlyoutLabelText {
+  font-weight: 600;
+}
+/* 可展开项 */
+.blocklyTreeIconClosedLtr {
+  background: url(./block_icon/extension.png) no-repeat center;
+}
+.blocklyTreeSelected>.blocklyTreeIconOpen {
+  background: url(./block_icon/extension-hv.png) no-repeat center;
+}
+.blocklyTreeSelected>.blocklyTreeIconClosedLtr {
+  background: url(./block_icon/main-hv.png) no-repeat center;
+}
+
+/* 掌控试验箱 */
+.blocklyTreeIconBox {
+  background: url(./block_icon/box.png) no-repeat center;
+}
+.blocklyTreeSelected .blocklyTreeIconBox {
+  background: url(./block_icon/box-hv.png) no-repeat center;
+}
+/* 掌控试验箱点阵屏 */
+.blocklyTreeIconBox_lattice {
+  background: url(./block_icon/Box_lattice.png) no-repeat center;
+}
+.blocklyTreeSelected .blocklyTreeIconBox_lattice {
+  background: url(./block_icon/Box_lattice-hv.png) no-repeat center;
+}
+/* 输入 */
+.blocklyTreeIconInput {
+  background: url(./block_icon/input.png) no-repeat center;
+}
+.blocklyTreeSelected .blocklyTreeIconInput {
+  background: url(./block_icon/input-hv.png) no-repeat center;
+}
+/* 输出 */
+.blocklyTreeIconOutput {
+  background: url(./block_icon/Output.png) no-repeat center;
+}
+.blocklyTreeSelected .blocklyTreeIconOutput {
+  background: url(./block_icon/Output-hv.png) no-repeat center;
+}
+/* RGB */
+.blocklyTreeIconRGB {
+  background: url(./block_icon/rgb.png) no-repeat center;
+}
+.blocklyTreeSelected .blocklyTreeIconRGB {
+  background: url(./block_icon/rgb-hv.png) no-repeat center;
+}
+/* 显示 */
+.blocklyTreeIconExhibit {
+  background: url(./block_icon/according.png) no-repeat center;
+}
+.blocklyTreeSelected .blocklyTreeIconExhibit {
+  background: url(./block_icon/according-hv.png) no-repeat center;
+}
+/* 音乐 */
+.blocklyTreeIconMusic {
+  background: url(./block_icon/music.png) no-repeat center;
+}
+.blocklyTreeSelected .blocklyTreeIconMusic {
+  background: url(./block_icon/music-hv.png) no-repeat center;
+}
+/* 音频 */
+.blocklyTreeIconAudio {
+  background: url(./block_icon/audio.png) no-repeat center;
+}
+.blocklyTreeSelected .blocklyTreeIconAudio {
+  background: url(./block_icon/audio-hv.png) no-repeat center;
+}
+/* 引脚 */
+.blocklyTreeIconPin {
+  background: url(./block_icon/pin.png) no-repeat center;
+}
+.blocklyTreeSelected .blocklyTreeIconPin {
+  background: url(./block_icon/pin-hv.png) no-repeat center;
+}
+/* 无线广播 */
+.blocklyTreeIconRadio {
+  background: url(./block_icon/radio.png) no-repeat center;
+}
+.blocklyTreeSelected .blocklyTreeIconRadio {
+  background: url(./block_icon/radio-hv.png) no-repeat center;
+}
+/* Wi-fi */
+.blocklyTreeIconWifi {
+  background: url(./block_icon/wifi.png) no-repeat center;
+}
+.blocklyTreeSelected .blocklyTreeIconWifi {
+  background: url(./block_icon/wifi-hv.png) no-repeat center;
+}
+/* OneNet */
+.blocklyTreeIconOneNet {
+  background: url(./block_icon/OneNet.png) no-repeat center;
+}
+.blocklyTreeSelected .blocklyTreeIconOneNet {
+  background: url(./block_icon/OneNet-hv.png) no-repeat center;
+}
+/* TinyWeblO */
+.blocklyTreeIconTinyWeblO {
+  background: url(./block_icon/TinyWeblO.png) no-repeat center;
+}
+.blocklyTreeSelected .blocklyTreeIconTinyWeblO {
+  background: url(./block_icon/TinyWeblO-hv.png) no-repeat center;
+}
+/* Blynk */
+.blocklyTreeIconBlynk {
+  background: url(./block_icon/Blynk.png) no-repeat center;
+}
+.blocklyTreeSelected .blocklyTreeIconBlynk {
+  background: url(./block_icon/Blynk-hv.png) no-repeat center;
+}
+/* MQTT */
+.blocklyTreeIconMQTT {
+  background: url(./block_icon/MQTT.png) no-repeat center;
+}
+.blocklyTreeSelected .blocklyTreeIconMQTT {
+  background: url(./block_icon/MQTT-hv.png) no-repeat center;
+}
+/* mPython_MQTT */
+.blocklyTreeIconmPython_MQTT {
+  background: url(./block_icon/mPython_MQTT.png) no-repeat center;
+}
+.blocklyTreeSelected .blocklyTreeIconmPython_MQTT {
+  background: url(./block_icon/mPython_MQTT-hv.png) no-repeat center;
+}
+/* Traffic_Sign_Classifier */
+.blocklyTreeIconTraffic_Sign_Classifier {
+  background: url(./block_icon/Traffic_Sign_Classifier.png) no-repeat center;
+  background-size: auto 18px;
+}
+.blocklyTreeSelected .blocklyTreeIconTraffic_Sign_Classifier {
+  background: url(./block_icon/Traffic_Sign_Classifier-hv.png) no-repeat center;
+  background-size: auto 18px;
+}
+/* Neopixel */
+.blocklyTreeIconNeopixel {
+  background: url(./block_icon/Neopixel.png) no-repeat center;
+}
+.blocklyTreeSelected .blocklyTreeIconNeopixel {
+  background: url(./block_icon/Neopixel-hv.png) no-repeat center;
+}
+/* Bluebit */
+.blocklyTreeIconBluebit {
+  background: url(./block_icon/Bluebit.png) no-repeat center;
+}
+.blocklyTreeSelected .blocklyTreeIconBluebit {
+  background: url(./block_icon/Bluebit-hv.png) no-repeat center;
+}
+/* Sensor */
+.blocklyTreeIconSensor {
+  background: url(./block_icon/Sensor.png) no-repeat center;
+}
+.blocklyTreeSelected .blocklyTreeIconSensor {
+  background: url(./block_icon/Sensor-hv.png) no-repeat center;
+}
+/* Tello */
+.blocklyTreeIconTello {
+  background: url(./block_icon/Tello.png) no-repeat center;
+}
+.blocklyTreeSelected .blocklyTreeIconTello {
+  background: url(./block_icon/Tello-hv.png) no-repeat center;
+}
+/* Yeelight */
+.blocklyTreeIconYeelight {
+  background: url(./block_icon/Yeelight.png) no-repeat center;
+}
+.blocklyTreeSelected .blocklyTreeIconYeelight {
+  background: url(./block_icon/Yeelight-hv.png) no-repeat center;
+}
+/* 逻辑 */
+.blocklyTreeIconLogic {
+  background: url(./block_icon/logic.png) no-repeat center;
+}
+.blocklyTreeSelected .blocklyTreeIconLogic {
+  background: url(./block_icon/logic-hv.png) no-repeat center;
+}
+/* 循环 */
+.blocklyTreeIconCycle {
+  background: url(./block_icon/cycle.png) no-repeat center;
+}
+.blocklyTreeSelected .blocklyTreeIconCycle {
+  background: url(./block_icon/cycle-hv.png) no-repeat center;
+}
+/* 数学 */
+.blocklyTreeIconMathematics {
+  background: url(./block_icon/mathematics.png) no-repeat center;
+}
+.blocklyTreeSelected .blocklyTreeIconMathematics {
+  background: url(./block_icon/mathematics-hv.png) no-repeat center;
+}
+/* 文本 */
+.blocklyTreeIconText {
+  background: url(./block_icon/text.png) no-repeat center;
+}
+.blocklyTreeSelected .blocklyTreeIconText {
+  background: url(./block_icon/text-hv.png) no-repeat center;
+}
+/* 列表 */
+.blocklyTreeIconList {
+  background: url(./block_icon/list.png) no-repeat center;
+}
+.blocklyTreeSelected .blocklyTreeIconList {
+  background: url(./block_icon/list-hv.png) no-repeat center;
+}
+/* 变量 */
+.blocklyTreeIconVariable {
+  background: url(./block_icon/variable.png) no-repeat center;
+}
+.blocklyTreeSelected .blocklyTreeIconVariable {
+  background: url(./block_icon/variable-hv.png) no-repeat center;
+}
+/* 函数 */
+.blocklyTreeIconFunction {
+  background: url(./block_icon/function.png) no-repeat center;
+}
+.blocklyTreeSelected .blocklyTreeIconFunction {
+  background: url(./block_icon/function-hv.png) no-repeat center;
+}
+/* 天气 */
+.blocklyTreeIconWeather {
+  background: url(./block_icon/weather.png) no-repeat center;
+}
+.blocklyTreeSelected .blocklyTreeIconWeather {
+  background: url(./block_icon/weather-hv.png) no-repeat center;
+}
+/* 元组 */
+.blocklyTreeIconTuples {
+  background: url(./block_icon/tuples.png) no-repeat center;
+}
+.blocklyTreeSelected .blocklyTreeIconTuples {
+  background: url(./block_icon/tuples-hv.png) no-repeat center;
+}
+/* 字典 */
+.blocklyTreeIconDictionary {
+  background: url(./block_icon/dictionary.png) no-repeat center;
+}
+.blocklyTreeSelected .blocklyTreeIconDictionary {
+  background: url(./block_icon/dictionary-hv.png) no-repeat center;
+}
+/* 集合 */
+.blocklyTreeIconCollection {
+  background: url(./block_icon/collection.png) no-repeat center;
+}
+.blocklyTreeSelected .blocklyTreeIconCollection {
+  background: url(./block_icon/collection-hv.png) no-repeat center;
+}
+/* 文件 */
+.blocklyTreeIconFile {
+  background: url(./block_icon/file.png) no-repeat center;
+}
+.blocklyTreeSelected .blocklyTreeIconFile {
+  background: url(./block_icon/file-hv.png) no-repeat center;
+}
+/* 网络 */
+.blocklyTreeIconNetwork {
+  background: url(./block_icon/network.png) no-repeat center;
+}
+.blocklyTreeSelected .blocklyTreeIconNetwork {
+  background: url(./block_icon/network-hv.png) no-repeat center;
+}
+/* 串口 */
+.blocklyTreeIconSerialport {
+  background: url(./block_icon/serial-port.png) no-repeat center;
+}
+.blocklyTreeSelected .blocklyTreeIconSerialport {
+  background: url(./block_icon/serial-port-hv.png) no-repeat center;
+}
+/* AI */
+.blocklyTreeIconAI {
+  background: url(./block_icon/AI.png) no-repeat center;
+}
+.blocklyTreeSelected .blocklyTreeIconAI {
+  background: url(./block_icon/AI-hv.png) no-repeat center;
+}
+/* 微信 */
+.blocklyTreeIconWX {
+  background: url(./block_icon/WX.png) no-repeat center;
+}
+.blocklyTreeSelected .blocklyTreeIconWX {
+  background: url(./block_icon/WX-hv.png) no-repeat center;
+}
+/* 添加 */
+.blocklyTreeIconAdd {
+  background: url(./block_icon/add.png) no-repeat center;
+}
+.blocklyTreeSelected .blocklyTreeIconAdd {
+  background: url(./block_icon/add-hv.png) no-repeat center;
+}
+/* 通用传感器 */
+.blocklyTreeIconGeneral {
+  background: url(./block_icon/general.png) no-repeat center;
+}
+.blocklyTreeIconGeneral2 {
+  background-image: none;
+  position: relative;
+}
+.blocklyTreeIconGeneral2::after {
+  width: 100%;
+  height: 100%;
+  display: block;
+  content: ' ';
+  background-image: url(./block_icon/general1.png);
+  background-position: center;
+  background-repeat: no-repeat;
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+.blocklyTreeSelected .blocklyTreeIconGeneral {
+  background: url(./block_icon/general-hv.png) no-repeat center;
+}
+.blocklyTreeSelected .blocklyTreeIconGeneral2::after {
+  background: url(./block_icon/general-hv.png) no-repeat center;
+}
+/* 人脸识别 */
+.blocklyTreeFace-recognition1 {
+  background: url(./block_icon/Face-recognition1.png) no-repeat center;
+}
+.blocklyTreeSelected .blocklyTreeFace-recognition1 {
+  background: url(./block_icon/Face-recognition1-hv.png) no-repeat center;
+}
+/* 20类识别 */
+.blocklyTreeAI_20classid {
+  background: url(./block_icon/AI_20classid.png) no-repeat center;
+}
+.blocklyTreeSelected .blocklyTreeAI_20classid {
+  background: url(./block_icon/AI_20classid-hv.png) no-repeat center;
+}
+/* 数字识别 */
+.blocklyTreeHandwriting-recognition {
+  background: url(./block_icon/Handwriting-recognition1.png) no-repeat center;
+}
+.blocklyTreeSelected .blocklyTreeHandwriting-recognition {
+  background: url(./block_icon/Handwriting-recognition-hv.png) no-repeat center;
+}
+/* 颜色追踪识别 */
+.blocklyTreecolor1 {
+  background: url(./block_icon/color1.png) no-repeat center;
+}
+.blocklyTreeSelected .blocklyTreecolor1 {
+  background: url(./block_icon/color-hv.png) no-repeat center;
+}
+/* 线性回归 */
+.blocklyTreelinear-regression {
+  background: url(./block_icon/Linear-regression.png) no-repeat center;
+}
+.blocklyTreeSelected .blocklyTreelinear-regression {
+  background: url(./block_icon/Linear-regression-hv.png) no-repeat center;
+}
+/* 鸢尾花识别 */
+.blocklyTreeflower_de_luce {
+  background: url(./block_icon/irises.png) no-repeat center;
+}
+.blocklyTreeSelected .blocklyTreeflower_de_luce {
+  background: url(./block_icon/irises-hv.png) no-repeat center;
+}
+/* 百灵鸽 */
+.blocklyTreeLark_pigeon {
+  background: url(./block_icon/Lark_pigeon.png) no-repeat center;
+}
+.blocklyTreeSelected .blocklyTreeLark_pigeon {
+  background: url(./block_icon/Lark_pigeon-hv.png) no-repeat center;
+}
+/* N+ */
+.blocklyTreeN_add {
+  background: url(./block_icon/N_add.png) no-repeat center;
+}
+.blocklyTreeSelected .blocklyTreeN_add {
+  background: url(./block_icon/N_add-hv.png) no-repeat center;
+}
+.blocklyTreeN_add_1 {
+  background: url(./block_icon/N_add.png) no-repeat center;
+}
+.blocklyTreeSelected .blocklyTreeN_add_1 {
+  background: url(./block_icon/N_add-hv.png) no-repeat center;
+}
+/* 千里马 */
+.blocklyTreeN_QLM {
+  background: url(./block_icon/N_QLM.png) no-repeat center;
+}
+.blocklyTreeSelected .blocklyTreeN_QLM {
+  background: url(./block_icon/N_add-hv.png) no-repeat center;
+}
+/* 小方舟 */
+.blocklyTreeN_XFZ {
+  background: url(./block_icon/N_XFZ.png) no-repeat center;
+}
+.blocklyTreeSelected .blocklyTreeN_XFZ {
+  background: url(./block_icon/N_add-hv.png) no-repeat center;
+}
+/* 鳄霸王 */
+.blocklyTreeN_EBW {
+  background: url(./block_icon/N_EBW.png) no-repeat center;
+}
+.blocklyTreeSelected .blocklyTreeN_EBW {
+  background: url(./block_icon/N_add-hv.png) no-repeat center;
+}
+/* 聊天机器人 */
+.blocklyTreechatbot {
+  background: url(./block_icon/chatbot.png) no-repeat center;
+}
+.blocklyTreeSelected .blocklyTreechatbot {
+  background: url(./block_icon/chatbot-hv.png) no-repeat center;
+}
+/* 手势识别 */
+.blocklyTreegestures {
+  background: url(./block_icon/gestures.png) no-repeat center;
+}
+.blocklyTreeSelected .blocklyTreegestures {
+  background: url(./block_icon/gestures-hv.png) no-repeat center;
+}
+/* microbit */
+.blocklyTreemicrobit {
+  background: url(./block_icon/microbit.png) no-repeat center;
+}
+.blocklyTreeSelected .blocklyTreemicrobit {
+  background: url(./block_icon/microbit-hv.png) no-repeat center;
+}
+/* 情绪识别 */
+.blocklyTreeFaceAI {
+  background: url(./block_icon/FaceAI.png) no-repeat center;
+}
+.blocklyTreeSelected .blocklyTreeFaceAI {
+  background: url(./block_icon/FaceAI-hv.png) no-repeat center;
+}
+/* 文章聚类 */
+.blocklyTreeword_cloud {
+  background: url(./block_icon/word_cloud.png) no-repeat center;
+}
+.blocklyTreeSelected .blocklyTreeword_cloud {
+  background: url(./block_icon/word_cloud-hv.png) no-repeat center;
+}
+/* 文章分类 */
+.blocklyTreearticle_kmeans {
+  background: url(./block_icon/article_kmeans.png) no-repeat center;
+}
+.blocklyTreeSelected .blocklyTreearticle_kmeans {
+  background: url(./block_icon/article_kmeans-hv.png) no-repeat center;
+}
+/* 蓝牙 */
+.blocklyTreebluetooth {
+  background: url(./block_icon/bluetooth.png) no-repeat center;
+}
+.blocklyTreeSelected .blocklyTreebluetooth {
+  background: url(./block_icon/bluetooth-hv.png) no-repeat center;
+}
+/* 外围设备(从机) */
+.blocklyTreePeripheralEquipment {
+  background: url(./block_icon/PeripheralEquipment.png) no-repeat center;
+}
+.blocklyTreeSelected .blocklyTreePeripheralEquipment {
+  background: url(./block_icon/PeripheralEquipment-hv.png) no-repeat center;
+}
+/* 中心设备(主机) */
+.blocklyTreeCenterEquipment {
+  background: url(./block_icon/CenterEquipment.png) no-repeat center;
+}
+.blocklyTreeSelected .blocklyTreeCenterEquipment {
+  background: url(./block_icon/CenterEquipment-hv.png) no-repeat center;
+}
+/* 串口透传 */
+.blocklyTreeSerialPort {
+  background: url(./block_icon/SerialPort.png) no-repeat center;
+}
+.blocklyTreeSelected .blocklyTreeSerialPort {
+  background: url(./block_icon/SerialPort-hv.png) no-repeat center;
+}
+/* 人机交互 */
+.blocklyTreeHumanComputer {
+  background: url(./block_icon/HumanComputer.png) no-repeat center;
+}
+.blocklyTreeSelected .blocklyTreeHumanComputer {
+  background: url(./block_icon/HumanComputer-hv.png) no-repeat center;
+}
+/* MU */
+.blocklyTreeMU {
+  background: url(./block_icon/mu.png) no-repeat center;
+}
+.blocklyTreeSelected .blocklyTreeMU {
+  background: url(./block_icon/mu-hv.png) no-repeat center;
+}
+/* Carbit */
+.blocklyTreeCarbit {
+  background: url(./block_icon/Carbit.png) no-repeat center;
+}
+.blocklyTreeSelected .blocklyTreeCarbit {
+  background: url(./block_icon/Carbit-hv.png) no-repeat center;
+}
+/* Gamebit */
+.blocklyTreeGamebit {
+  background: url(./block_icon/Gamebit.png) no-repeat center;
+}
+.blocklyTreeSelected .blocklyTreeGamebit {
+  background: url(./block_icon/Gamebit-hv.png) no-repeat center;
+}
+/* ExtendbitII */
+.blocklyTreeExtendbitII {
+  background: url(./block_icon/ExtendbitII.png) no-repeat center;
+}
+.blocklyTreeSelected .blocklyTreeExtendbitII {
+  background: url(./block_icon/ExtendbitII-hv.png) no-repeat center;
+}
+/* Botbit */
+.blocklyTreeBotbit {
+  background: url(./block_icon/Botbit.png) no-repeat center;
+}
+.blocklyTreeSelected .blocklyTreeBotbit {
+  background: url(./block_icon/Botbit-hv.png) no-repeat center;
+}
+/* motor */
+.blocklyTreemotor {
+  background: url(./block_icon/motor.png) no-repeat center;
+}
+.blocklyTreeSelected .blocklyTreemotor {
+  background: url(./block_icon/motor-hv.png) no-repeat center;
+}
+/* 冲锋舟 EmotionAI分类 */
+.blocklyTreekhadas_yolo {
+  background: url(./block_icon/khadas_yolo.png) no-repeat center;
+}
+.blocklyTreeSelected .blocklyTreekhadas_yolo {
+  background: url(./block_icon/khadas_yolo-hv.png) no-repeat center;
+}
+/* 冲锋舟 EmotionAI分类 */
+.blocklyTreekhadas_EmotionAI {
+  background: url(./block_icon/khadas_EmotionAI.png) no-repeat center;
+}
+.blocklyTreeSelected .blocklyTreekhadas_EmotionAI {
+  background: url(./block_icon/khadas_EmotionAI-hv.png) no-repeat center;
+}
+/* 冲锋舟 CNN分类 */
+.blocklyTreekhadas_CNN {
+  background: url(./block_icon/khadas_CNN.png) no-repeat center;
+}
+.blocklyTreeSelected .blocklyTreekhadas_CNN {
+  background: url(./block_icon/khadas_CNN-hv.png) no-repeat center;
+}
+/* AI摄像头 其它传感器和输出设备*/
+.blocklyTreeAIcamera {
+  background: url(./block_icon/AIcamera.png) no-repeat center;
+}
+.blocklyTreeSelected .blocklyTreeAIcamera {
+  background: url(./block_icon/AIcamera-hv.png) no-repeat center;
+}
+/* AI 通用的LCD屏幕 */
+.blocklyTreeAIcamera_LCD {
+  background: url(./block_icon/AIcamera_LCD.png) no-repeat center;
+}
+.blocklyTreeSelected .blocklyTreeAIcamera_LCD {
+  background: url(./block_icon/AIcamera_LCD-hv.png) no-repeat center;
+}
+/* AI 通用的图像 */
+.blocklyTreeAIcamera_image {
+  background: url(./block_icon/AIcamera_image.png) no-repeat center;
+}
+.blocklyTreeSelected .blocklyTreeAIcamera_image {
+  background: url(./block_icon/AIcamera_image-hv.png) no-repeat center;
+}
+/* AI 通用的摄像头 */
+.blocklyTreeAIcamera_camera {
+  background: url(./block_icon/AIcamera_camera.png) no-repeat center;
+}
+.blocklyTreeSelected .blocklyTreeAIcamera_camera {
+  background: url(./block_icon/AIcamera_camera-hv.png) no-repeat center;
+}
+/* AI 通用的kpu */
+.blocklyTreeAIcamera_kpu {
+  background: url(./block_icon/AIcamera_kpu.png) no-repeat center;
+}
+.blocklyTreeSelected .blocklyTreeAIcamera_kpu {
+  background: url(./block_icon/AIcamera_kpu-hv.png) no-repeat center;
+}
+/* mpython_conn */
+.blocklyTreempython_conn {
+  background: url(./block_icon/mpython_conn.png) no-repeat center;
+}
+.blocklyTreeSelected .blocklyTreempython_conn {
+  background: url(./block_icon/mpython_conn-hv.png) no-repeat center;
+}
+/* 桌面机器人循迹 */
+.blocklyTreeTableRobot_tracking {
+  background: url(./block_icon/TableRobot_tracking.png) no-repeat center;
+}
+.blocklyTreeSelected .blocklyTreeTableRobot_tracking {
+  background: url(./block_icon/TableRobot_tracking-hv.png) no-repeat center;
+}
+/* 桌面机器人颜色 */
+.blocklyTreeTableRobot_color {
+  background: url(./block_icon/TableRobot_color.png) no-repeat center;
+}
+.blocklyTreeSelected .blocklyTreeTableRobot_color {
+  background: url(./block_icon/TableRobot_color-hv.png) no-repeat center;
+}
+/* 桌面机器人运动 */
+.blocklyTreeTableRobot_motion {
+  background: url(./block_icon/TableRobot_motion.png) no-repeat center;
+}
+.blocklyTreeSelected .blocklyTreeTableRobot_motion {
+  background: url(./block_icon/TableRobot_motion-hv.png) no-repeat center;
+}
+/* 桌面机器人智能音箱(百度语音功能) */
+.blocklyTreeTableRobot_baidu_audio {
+  background: url(./block_icon/TableRobot_baidu_audio.png) no-repeat center;
+}
+/* 桌面机器人配置 */
+.TableRobot_Config {
+  background: url(./block_icon/TableRobot_Config.png) no-repeat center;
+}
+.blocklyTreeSelected .TableRobot_Config {
+  background: url(./block_icon/TableRobot_Config-hv.png) no-repeat center;
+}
+/* 百度语音 */
+.blocklyTreebaidu_audio {
+  background: url(./block_icon/baidu_audio.png) no-repeat center;
+}
+.blocklyTreeSelected .blocklyTreebaidu_audio {
+  background: url(./block_icon/baidu_audio-hv.png) no-repeat center;
+}
+/* I2C */
+.blocklyTreeI2C {
+  background: url(./block_icon/I2C.png) no-repeat center;
+}
+.blocklyTreeSelected .blocklyTreeI2C {
+  background: url(./block_icon/I2C-hv.png) no-repeat center;
+}
+/* 执行器 */
+.blocklyTreeActuator {
+  background: url(./block_icon/actuator.png) no-repeat center;
+  background-size: 24px auto;
+}
+.blocklyTreeSelected .blocklyTreeActuator {
+  background: url(./block_icon/actuator-hv.png) no-repeat center;
+  background-size: 24px auto;
+}
+/* 代码库 */
+.blocklyTreeLibrary {
+  background: url(./block_icon/library.png) no-repeat center;
+}
+.blocklyTreeSelected .blocklyTreeLibrary {
+  background: url(./block_icon/library-hv.png) no-repeat center;
+}
+
+
+/* 控制台样式 */
+.terminal {
+	float: left;
+}
+.terminal-cursor {
+	color: #333333;
+	background: #cccccc;
+}
+.terminal div {
+	white-space: nowrap;
+	color: #0f0f0f;
+	height: 12px;
+}
+
+
+/* blocklyFlyout固定按钮 */
+.blocklyFlyout-fixed {
+  width: 18px;
+  height: 18px;
+  display: block;
+  background: url('./blockly-flyout-fixed.png') no-repeat center;
+  background-size: 100%;
+  position: absolute;
+  top: 10px;
+  left: 10px;
+}
+.blocklyFlyout-fixed.active {
+  background: url('./blockly-flyout-fixed-hv.png') no-repeat center;
+  background-size: 100%;
+}
+
+.new-1956-gui .blocklyTreeIconGeneral2 {
+  display: none !important;
+}
+.new-1956-gui .blocklyTreeLabel {
+  font-size: 14px;
+  padding-left: 40px;
+}

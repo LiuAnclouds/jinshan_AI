@@ -1,0 +1,71 @@
+.container {
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  background-color: #fff;
+  padding: 40px;
+  border-radius: 4px;
+}
+.head {
+  width: 100%;
+  border-bottom: #333 solid 1px;
+  padding-bottom: 20px;
+  margin-bottom: 40px;
+}
+.head button {
+  padding: 4px 12px;
+  cursor: pointer;
+}
+
+.content-box {
+  width: 100%;
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+}
+.tool-introduce {
+  width: 16%;
+  font-size: 16px;
+  color: #000;
+  padding-right: 20px;
+  padding-top: 90px;
+}
+.content {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+}
+.nav {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 60px;
+}
+.nav li {
+  flex: 1;
+  height: 40px;
+  font-size: 16px;
+  text-align: center;
+  color: #333;
+  line-height: 38px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  cursor: pointer;
+  margin-right: 10px;
+}
+.nav li:last-child {
+  margin-right: 0;
+}
+.nav li.active {
+  background-color: rgba(231, 56, 56, 0.8);
+  color: #fff;
+  flex: 1.8;
+}
+.nav li:not(.active):hover {
+  background-color: #eee;
+}
+.child-area {
+  width: 100%;
+  padding: 40px;
+}

@@ -1,0 +1,40 @@
+/* 1. 定义呼吸动画：光晕和透明度的温和变化 */
+@keyframes auroraPulse {
+  0% {
+    box-shadow: 0 0 4px rgba(0, 180, 160, 0.3);
+    opacity: 0.85;
+  }
+  50% {
+    /* 扩散光晕，稍微降低透明度，营造呼吸感 */
+    box-shadow: 0 0 12px rgba(80, 227, 194, 0.6); 
+    opacity: 1;
+  }
+  100% {
+    box-shadow: 0 0 4px rgba(0, 180, 160, 0.3);
+    opacity: 0.85;
+  }
+}
+
+/* 2. 应用样式 */
+.ace_marker-layer .ace-highlight-snippet {
+  position: absolute;
+  
+  /* --- 核心配色 --- */
+  /* 使用参考图中的 青色 -> 嫩绿 渐变，但调整为适合浅色底的浓度 */
+  background: linear-gradient(120deg, #42e6c8 0%, #b4ec51 100%) !important;
+  
+  /* --- 关键黑科技：混合模式 --- */
+  /* multiply (正片叠底) 会把背景色“压”进文字里，让黑色文字变成深青/深绿色 */
+  /* 从而实现“文字变色”的错觉，而不仅仅是背景变色 */
+  mix-blend-mode: multiply; 
+  
+  /* --- 细节打磨 --- */
+  border-radius: 4px; /* 适度的圆角 */
+  border: none;       /* 去掉生硬的边框 */
+  
+  /* --- 呼吸动画 --- */
+  animation: auroraPulse 2.5s infinite ease-in-out;
+  
+  z-index: 6;
+  pointer-events: none;
+}
