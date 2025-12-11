@@ -2,12 +2,13 @@
 import { ref, onMounted, onBeforeUnmount } from 'vue';
 import { useRoute } from 'vue-router';
 import axios from 'axios';
-import Blockly from 'blockly';
+import * as Blockly from 'blockly/core';
 import './blockly.css';
 import '@/blocks';
 import getToolbox from '@/global/toolbox';
 import { loadFaceBlocks } from '@/blocks';
 import store from '@/store';
+import { createBlockClickListener } from '@/blocks/Highlight';
 
 
 const blocklyDiv = ref(null)
@@ -20,7 +21,6 @@ onMounted(() => {
   init()
 
   observer = new ResizeObserver(() => {
-    console.log("blocklyDiv resized!");
     if (workspace) Blockly.svgResize(workspace);
   });
   observer.observe(blocklyDiv.value);
@@ -71,17 +71,24 @@ async function init() {
   workspace.options.maxTrashcanContents = 10;
   workspace.options.oneBasedIndex = false;
   workspace.addChangeListener(updateFunction);
-  workspace.addChangeListener(handleBlockClick);
-  // workspace.addChangeListener(clickFunction);
-  // workspace.addChangeListener(onBlocklyChange)
+  // 使用统一的积木点击监听器
+  workspace.addChangeListener(createBlockClickListener(
+    workspace,
+    ({ blockCode, workspaceCode, startLine, endLine }) => {
+      store.setSelectedCodes({ blockCode, workspaceCode, startLine, endLine });
+    },
+    (error) => {
+      console.error('[highlight] block click handler error', error);
+    }
+  ));
   workspace.clear();
   workspace.variableList = workspace.variableList || []
   store.setWorkspace(workspace);
   editBlock();
 
   const route = useRoute();
-  console.log(route.query);
-  if (route.query?.type === 'newface') {
+  const faceTypes = ['newface', 'face-detection', 'face-registration', 'face-recognition'];
+  if (faceTypes.includes(route.query?.type)) {
     try {
       await loadFaceBlocks();
     } catch (e) {
@@ -90,6 +97,11 @@ async function init() {
   }
   workspace.updateToolbox(getToolbox(route.query));
   store.setICON();
+
+  // 如果是人脸场景且未指定 example，自动铺设预置示例积木，方便直接运行
+  if (faceTypes.includes(route.query?.type) && !route.query?.example) {
+    applyFacePreset(route.query?.type);
+  }
 
   if (Object.keys(route.query).length <= 0) return;
   setTimeout(() => {
@@ -101,8 +113,6 @@ async function loadExample(data) {
   const name = data?.example;
   if (!name) return;
   const res = await axios.get('http://localhost:8001/api/example?name=' + name);
-  // console.log(res);
-
   if (!res.data || !res.data.flag) {
     alert(res.data?.msg || '加载失败！');
     return;
@@ -124,57 +134,15 @@ function updateFunction(event) {
   store.setXmlCode(blockxml);
 }
 
-function handleBlockClick(event) {
-  if (event.type !== Blockly.Events.UI || event.element !== 'click') return;
-  const blockId = event.blockId;
-  if (!blockId) return;
-  const block = workspace.getBlockById(blockId);
-  if (!block) return;
-  try {
-    // 确保 definitions_ 存在，避免部分积木 generator 未初始化时报错
-    Blockly.Python.definitions_ = Blockly.Python.definitions_ || Object.create(null);
-    const raw = Blockly.Python.blockToCode(block);
-    const normalize = (c) => Array.isArray(c) ? (c[0] || '') : (c || '');
-    const blockCode = normalize(raw);
-
-    // 使用全局 STATEMENT_PREFIX 给所有语句打上 block_id 标记，再解析行号
-    const generator = Blockly.Python;
-    const originalPrefix = generator.STATEMENT_PREFIX;
-    const originalSuffix = generator.STATEMENT_SUFFIX;
-    let markerLine = -1;
-    try {
-      generator.STATEMENT_PREFIX = '# block_id:%1\n';
-      generator.STATEMENT_SUFFIX = '';
-      generator.init(workspace);
-      const codeWithMarker = generator.workspaceToCode(workspace);
-      const marker = `# block_id:${blockId}`;
-      markerLine = codeWithMarker.split('\n').findIndex(l => l.includes(marker));
-    } catch (err) {
-      console.error('[highlight] marker generation failed', err);
-    } finally {
-      generator.STATEMENT_PREFIX = originalPrefix;
-      generator.STATEMENT_SUFFIX = originalSuffix;
-      generator.init(workspace);
-    }
-
-    // 生成干净的代码给右侧编辑器使用
-    const workspaceCode = Blockly.Python.workspaceToCode(workspace);
-
-    console.log('[highlight][block-click]', { blockId, blockCode, workspaceCode, markerLine });
-    store.setSelectedCodes({ blockCode, workspaceCode, startLine: markerLine });
-  } catch (e) {
-    console.error('[highlight] blockToCode error', e);
-  }
-}
+// handleBlockClick 函数已移至 src/blocks/Highlight/index.js，使用统一的工具函数
 
 function onBlocklyChange(event) {
   if (event.type === Blockly.Events.UI && event.element === "click") {
     const blockId = event.blockId;
     if (!blockId) return;
-    const block = workspace.getBlockById(blockId);
-    if (!block) return;
-    const code = Blockly.Python.blockToCode(block);
-    console.log(code);
+  const block = workspace.getBlockById(blockId);
+  if (!block) return;
+  Blockly.Python.blockToCode(block);
   }
 }
 
@@ -248,10 +216,120 @@ function editBlock() {
       this.scrollbar_.setPosition_(this.scrollbar_.position_.x, this.scrollbar_.position_.y))
   }
 }
-// function clickFunction(e) {
-//   console.log('22222',e);
-// }
 
+// 根据入口类型加载默认示例积木布局
+function applyFacePreset(type) {
+  const presetXml = buildFacePresetXml(type);
+  if (!presetXml) return;
+  try {
+    const dom = Blockly.Xml.textToDom(presetXml);
+    workspace.clear();
+    Blockly.Xml.domToWorkspace(dom, workspace);
+    goCreate.value = true;
+    updateFunction();
+  } catch (e) {
+    console.error('应用人脸预置积木失败', e);
+  }
+}
+
+function buildFacePresetXml(type) {
+  // 公共色块值
+  const rgbBlock = `
+    <value name="COLOR">
+      <block type="face_ai_rgb">
+        <field name="R">255</field>
+        <field name="G">215</field>
+        <field name="B">0</field>
+      </block>
+    </value>`;
+
+  if (type === 'face-detection') {
+    return `
+<xml xmlns="https://developers.google.com/blockly/xml">
+  <block type="face_ai_init_globals" deletable="false" movable="true" x="20" y="20">
+    <next>
+      <block type="face_ai_step1_init">
+        <next>
+          <block type="face_ai_step2_input">
+            <value name="VALUE">
+              <block type="face_ai_local_image"></block>
+            </value>
+            <next>
+              <block type="face_ai_step3_process">
+                <next>
+                  <block type="face_ai_step4_detect">
+                    <next>
+                      <block type="face_ai_step5_data">
+                        <next>
+                          <block type="face_ai_step6_draw">
+                            ${rgbBlock}
+                            <next>
+                              <block type="face_ai_step7_show"></block>
+                            </next>
+                          </block>
+                        </next>
+                      </block>
+                    </next>
+                  </block>
+                </next>
+              </block>
+            </next>
+          </block>
+        </next>
+      </block>
+    </next>
+  </block>
+</xml>`;
+  }
+
+  if (type === 'face-registration') {
+    return `
+<xml xmlns="https://developers.google.com/blockly/xml">
+  <block type="face_ai_reg_init_globals" deletable="false" movable="true" x="20" y="20">
+    <next>
+      <block type="face_ai_reg_input">
+        <next>
+          <block type="face_ai_reg_commit"></block>
+        </next>
+      </block>
+    </next>
+  </block>
+</xml>`;
+  }
+
+  if (type === 'face-recognition') {
+    return `
+<xml xmlns="https://developers.google.com/blockly/xml">
+  <!-- 单一初始化：直接用识别初始化驱动全流程 -->
+  <block type="face_ai_rec_init_globals" deletable="false" movable="true" x="20" y="20">
+    <next>
+      <!-- 先注册：输入+提交 -->
+      <block type="face_ai_reg_input">
+        <next>
+          <block type="face_ai_reg_commit">
+            <next>
+              <!-- 再识别：输入+运行 -->
+              <block type="face_ai_rec_input">
+                <next>
+                  <block type="face_ai_rec_run"></block>
+                </next>
+              </block>
+            </next>
+          </block>
+        </next>
+      </block>
+    </next>
+  </block>
+
+  <!-- 输出块单独放置，避免连接到无 next 的值块 -->
+  <block type="face_ai_rec_label" x="420" y="40"></block>
+  <block type="face_ai_rec_score" x="420" y="120"></block>
+</xml>`;
+  }
+
+  // 默认：不返回预置
+  return '';
+}
 
 
 </script>

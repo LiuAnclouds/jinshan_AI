@@ -1,4 +1,4 @@
-const SOFTWARE_KEY = '3';
+﻿const SOFTWARE_KEY = '3';
 
 const CategoryColors = {
 	'Common': '#CC0000',
@@ -112,11 +112,9 @@ const CategoryColors = {
 	'AMIGO_camera': '#008CFF',
 	'AMIGO_kpu': '#3B67CC',
 	'AMIGO_AudioProcessing': '#4B67CC',
-<<<<<<< HEAD
-	'AMIGO_face_recognization': '008CFF',
-=======
+
 	'AMIGO_face_recognization': '#008CFF',
->>>>>>> b24584f (HighLight)
+
 	'AMIGO_self_learning_classifier': '#5B67CC',
 	'AMIGO_color': '#226799',
 	'AMIGO_qrcode': '#994700',

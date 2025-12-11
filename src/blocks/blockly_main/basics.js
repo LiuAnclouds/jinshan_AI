@@ -1,4 +1,4 @@
-//'use strict';
+﻿//'use strict';
 
 //goog.provide('Blockly.Blocks.mpython');
 //goog.require('Blockly.Blocks');
@@ -21,13 +21,7 @@ var inputs = null
 basics 
 blocks 
 ***/
-<<<<<<< HEAD
-Blockly.Blocks.loops.HUE = CategoryColors.Loop;
-Blockly.Blocks.logic.HUE = CategoryColors.Logic;
-Blockly.Blocks.texts.HUE = CategoryColors.Text;
-Blockly.Blocks.math.HUE = CategoryColors.Math;
-Blockly.Blocks.lists.HUE = CategoryColors.List;
-=======
+
 // Blockly.Blocks.loops.HUE = CategoryColors.Loop;
 // Blockly.Blocks.logic.HUE = CategoryColors.Logic;
 // Blockly.Blocks.texts.HUE = CategoryColors.Text;
@@ -39,7 +33,7 @@ Blockly.Msg['LOGIC_HUE'] = CategoryColors.Logic;
 Blockly.Msg['TEXTS_HUE'] = CategoryColors.Text;
 Blockly.Msg['MATH_HUE'] = CategoryColors.Math;
 Blockly.Msg['LISTS_HUE'] = CategoryColors.List;
->>>>>>> b24584f (HighLight)
+
 
 Blockly.Blocks['text_list'] = {
   /**

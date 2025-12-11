@@ -1,9 +1,7 @@
-<template>
+﻿<template>
   <div class="h5-container">
     <div class="control-panel">
-<<<<<<< HEAD
-      <h2>🔍 人脸检测控制台</h2>
-=======
+
       <h2>🔍 AI 人脸识别控制台</h2>
 
       <p class="status-text" :class="{ success: isModelLoaded }">
@@ -15,29 +13,25 @@
         </span>
       </p>
 
->>>>>>> b24584f (HighLight)
+
       <div class="mode-switch">
         <button :class="{ active: mode === 'upload' }" @click="setMode('upload')">📂 上传图片</button>
         <button :class="{ active: mode === 'camera' }" @click="setMode('camera')">📷 摄像头实时</button>
       </div>
 
       <div v-if="mode === 'camera'" class="action-box">
-<<<<<<< HEAD
-        <button v-if="!isCameraOpen" @click="openCamera" class="btn primary">开启摄像头</button>
-=======
+
         <button v-if="!isCameraOpen" @click="openCamera" class="btn primary" :disabled="!isModelLoaded">开启摄像头</button>
->>>>>>> b24584f (HighLight)
+
         <button v-else @click="captureFrame" class="btn warning">拍照并识别</button>
         <button v-if="isCameraOpen" @click="closeCamera" class="btn danger">关闭</button>
       </div>
 
       <div v-else class="action-box">
         <input type="file" ref="fileInput" @change="handleFile" accept="image/*" style="display:none">
-<<<<<<< HEAD
-        <button @click="$refs.fileInput.click()" class="btn primary">选择图片</button>
-=======
+
         <button @click="$refs.fileInput.click()" class="btn primary" :disabled="!isModelLoaded">选择图片</button>
->>>>>>> b24584f (HighLight)
+
       </div>
     </div>
 
@@ -45,9 +39,7 @@
       <video v-show="mode === 'camera' && isCameraOpen" ref="video" autoplay playsinline class="preview-media"></video>
 
       <div class="canvas-wrapper" v-show="imageUrl || (mode === 'camera' && captured)">
-<<<<<<< HEAD
-        <img v-if="imageUrl" :src="imageUrl" ref="targetImg" class="preview-media" />
-=======
+
         <img
             v-if="imageUrl"
             :src="imageUrl"
@@ -55,7 +47,7 @@
             class="preview-media"
             @load="onImageLoad"
         />
->>>>>>> b24584f (HighLight)
+
         <canvas ref="overlay" class="overlay-canvas"></canvas>
       </div>
 
@@ -76,18 +68,7 @@ export default {
       imageUrl: null,
       captured: false,
       loading: false,
-<<<<<<< HEAD
-      stream: null
-    };
-  },
-  methods: {
-    setMode(m) {
-      this.mode = m;
-      this.reset();
-      if (m === 'upload') this.closeCamera();
-    },
-    reset() {
-=======
+
       stream: null,
       isModelLoaded: false,
       faceApi: null,
@@ -99,7 +80,7 @@ export default {
     const checkTimer = setInterval(async () => {
       if (window.faceapi) {
         clearInterval(checkTimer);
-        console.log("本地 face-api.js 库加载成功");
+        // console.log("本地 face-api.js 库加载成功");
         this.faceApi = window.faceapi;
         await this.loadFaceModel();
       }
@@ -119,7 +100,7 @@ export default {
 
         // 确保你的模型文件位于 public/NewFace/model/ 目录下
         const modelPath = '/NewFace/model';
-        console.log(`正在从 ${modelPath} 加载模型...`);
+        // console.log(`正在从 ${modelPath} 加载模型...`);
 
         await this.faceApi.nets.tinyFaceDetector.loadFromUri(modelPath);
 
@@ -127,10 +108,10 @@ export default {
         const endTime = performance.now();
         this.loadTime = ((endTime - startTime) / 1000).toFixed(2);
 
-        console.log(`✅ 模型加载成功！耗时 ${this.loadTime} 秒`);
+        // console.log(`✅ 模型加载成功！耗时 ${this.loadTime} 秒`);
         this.isModelLoaded = true;
       } catch (error) {
-        console.error("❌ 模型加载失败:", error);
+        // console.error("❌ 模型加载失败:", error);
         alert(`模型加载失败！\n请检查 public/NewFace/model/ 目录下是否有模型文件。`);
       } finally {
         this.loading = false;
@@ -148,26 +129,23 @@ export default {
       if (this.imageUrl && this.imageUrl.startsWith('blob:')) {
         URL.revokeObjectURL(this.imageUrl);
       }
->>>>>>> b24584f (HighLight)
+
       this.imageUrl = null;
       this.captured = false;
       this.clearCanvas();
     },
-<<<<<<< HEAD
-=======
+
 
     // --- 摄像头控制 ---
->>>>>>> b24584f (HighLight)
+
     async openCamera() {
       try {
         this.stream = await navigator.mediaDevices.getUserMedia({ video: true });
         this.$refs.video.srcObject = this.stream;
         this.isCameraOpen = true;
-<<<<<<< HEAD
-        this.reset();
-=======
+
         this.resetData();
->>>>>>> b24584f (HighLight)
+
       } catch (err) {
         alert("无法访问摄像头: " + err.message);
       }
@@ -179,18 +157,7 @@ export default {
       }
       this.isCameraOpen = false;
     },
-<<<<<<< HEAD
-    handleFile(e) {
-      const file = e.target.files[0];
-      if (!file) return;
-      this.imageUrl = URL.createObjectURL(file);
-      this.$nextTick(() => {
-        this.simulateDetection(this.$refs.targetImg);
-      });
-    },
-    captureFrame() {
-      const video = this.$refs.video;
-=======
+
 
     // --- 图片处理逻辑 ---
 
@@ -209,20 +176,12 @@ export default {
       const video = this.$refs.video;
       if (!video) return;
 
->>>>>>> b24584f (HighLight)
+
       const canvas = document.createElement('canvas');
       canvas.width = video.videoWidth;
       canvas.height = video.videoHeight;
       canvas.getContext('2d').drawImage(video, 0, 0);
-<<<<<<< HEAD
-      this.imageUrl = canvas.toDataURL('image/png');
-      this.closeCamera(); // 拍照后暂停视频流
-      this.captured = true;
-      this.$nextTick(() => {
-        this.simulateDetection(this.$refs.targetImg);
-      });
-    },
-=======
+
 
       this.resetData();
       this.imageUrl = canvas.toDataURL('image/png');
@@ -236,7 +195,7 @@ export default {
       this.detectFaces(this.$refs.targetImg);
     },
 
->>>>>>> b24584f (HighLight)
+
     clearCanvas() {
       const canvas = this.$refs.overlay;
       if (canvas) {
@@ -244,39 +203,7 @@ export default {
         ctx.clearRect(0, 0, canvas.width, canvas.height);
       }
     },
-<<<<<<< HEAD
-    // 模拟人脸识别算法 (因为没有后端Python环境，这里用Mock演示逻辑)
-    simulateDetection(imgElement) {
-      this.loading = true;
-      setTimeout(() => {
-        this.loading = false;
-        if (!imgElement) return;
 
-        const canvas = this.$refs.overlay;
-        canvas.width = imgElement.width;
-        canvas.height = imgElement.height;
-        const ctx = canvas.getContext('2d');
-
-        // 模拟：在图片中心画一个识别框
-        const faceW = imgElement.width * 0.4;
-        const faceH = imgElement.height * 0.4;
-        const faceX = (imgElement.width - faceW) / 2;
-        const faceY = (imgElement.height - faceH) / 3;
-
-        ctx.strokeStyle = '#00ff00';
-        ctx.lineWidth = 4;
-        ctx.strokeRect(faceX, faceY, faceW, faceH);
-
-        // 标签
-        ctx.fillStyle = '#00ff00';
-        ctx.fillRect(faceX, faceY - 30, faceW, 30);
-        ctx.fillStyle = 'black';
-        ctx.font = 'bold 16px Arial';
-        ctx.fillText("User_Admin (98%)", faceX + 10, faceY - 8);
-
-        alert("识别成功！检测到 1 张人脸。");
-      }, 1500);
-=======
 
     // --- 辅助函数：画圆角矩形 ---
     drawRoundedRect(ctx, x, y, width, height, radius) {
@@ -369,39 +296,23 @@ export default {
         alert("识别过程出错: " + error.message);
         this.loading = false;
       }
->>>>>>> b24584f (HighLight)
+
     }
   },
   beforeUnmount() {
     this.closeCamera();
-<<<<<<< HEAD
-=======
+
     // 离开页面时清理内存
     if (this.imageUrl && this.imageUrl.startsWith('blob:')) {
       URL.revokeObjectURL(this.imageUrl);
     }
->>>>>>> b24584f (HighLight)
+
   }
 };
 </script>
 
 <style scoped>
-<<<<<<< HEAD
-.h5-container { padding: 20px; display: flex; flex-direction: column; align-items: center; max-width: 900px; margin: 0 auto; }
-.control-panel { background: white; padding: 20px; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); width: 100%; text-align: center; margin-bottom: 20px; }
-.mode-switch { display: flex; justify-content: center; gap: 10px; margin-bottom: 20px; }
-.mode-switch button { padding: 10px 20px; border: none; background: #eee; cursor: pointer; border-radius: 20px; transition: 0.3s; }
-.mode-switch button.active { background: #409eff; color: white; }
-.btn { padding: 10px 25px; border: none; border-radius: 6px; cursor: pointer; color: white; font-weight: bold; margin: 0 5px; }
-.primary { background: #409eff; }
-.warning { background: #e6a23c; }
-.danger { background: #f56c6c; }
-.display-area { position: relative; width: 100%; min-height: 400px; background: #000; border-radius: 12px; display: flex; justify-content: center; align-items: center; overflow: hidden; }
-.preview-media { max-width: 100%; max-height: 600px; }
-.canvas-wrapper { position: relative; display: inline-block; }
-.overlay-canvas { position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; }
-.loading-overlay { position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.7); color: white; display: flex; flex-direction: column; justify-content: center; align-items: center; }
-=======
+
 .h5-container { padding: 20px; display: flex; flex-direction: column; align-items: center; max-width: 900px; margin: 0 auto; font-family: 'Segoe UI', sans-serif; }
 .control-panel { background: white; padding: 25px; border-radius: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.08); width: 100%; text-align: center; margin-bottom: 25px; }
 .status-text { font-size: 14px; color: #666; margin-bottom: 15px; font-weight: bold; }
@@ -424,7 +335,7 @@ export default {
 .overlay-canvas { position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; }
 
 .loading-overlay { position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.75); color: white; display: flex; flex-direction: column; justify-content: center; align-items: center; z-index: 10; }
->>>>>>> b24584f (HighLight)
+
 .spinner { width: 40px; height: 40px; border: 4px solid #fff; border-top-color: transparent; border-radius: 50%; animation: spin 1s linear infinite; margin-bottom: 15px; }
 @keyframes spin { to { transform: rotate(360deg); } }
 </style>

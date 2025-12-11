@@ -1,5 +1,4 @@
-<<<<<<< HEAD
-=======
+﻿
 <script setup lang="ts">
 import { useRouter } from 'vue-router'
 
@@ -10,13 +9,24 @@ const goToH5Demo = () => {
   router.push({ name: 'FaceH5Demo' })
 }
 
-// Function to handle navigation to the Blockly GUI with the 'newface' type
-const goToBlocklyGui = () => {
-  router.push({ path: '/blockly-gui', query: { type: 'newface' } })
+// 导航到人脸检测积木
+const goToFaceDetection = () => {
+  router.push({ path: '/blockly-gui', query: { type: 'face-detection' } })
 }
+
+// 导航到人脸注册积木
+const goToFaceRegistration = () => {
+  router.push({ path: '/blockly-gui', query: { type: 'face-registration' } })
+}
+
+// 导航到人脸识别积木（含注册+识别工具栏）
+const goToFaceRecognition = () => {
+  router.push({ path: '/blockly-gui', query: { type: 'face-recognition' } })
+}
+
 </script>
 
->>>>>>> b24584f (HighLight)
+
 <template>
   <div class="face-home">
     <div class="header-section">
@@ -25,11 +35,9 @@ const goToBlocklyGui = () => {
     </div>
 
     <div class="cards-container">
-<<<<<<< HEAD
-      <div class="feature-card h5-card" @click="$router.push({ name: 'FaceH5Demo' })">
-=======
+
       <div class="feature-card h5-card" @click="goToH5Demo">
->>>>>>> b24584f (HighLight)
+
         <div class="card-icon">📸</div>
         <div class="card-content">
           <h3>Web 端智能识别</h3>
@@ -38,23 +46,34 @@ const goToBlocklyGui = () => {
         </div>
       </div>
 
-<<<<<<< HEAD
-      <div class="feature-card code-card" @click="$router.push({ name: 'FaceBlocklyDemo' })">
-        <div class="card-icon">🧩</div>
+
+      <div class="feature-card ai-card" @click="goToFaceDetection">
+        <div class="card-icon">🎯</div>
         <div class="card-content">
-          <h3>OpenCV 图形化训练</h3>
-          <p>像搭积木一样编写 Python 代码！学习如何收集人脸数据并训练你自己的 AI 模型。</p>
-          <span class="tag">Blockly x OpenCV</span>
-=======
-      <div class="feature-card ai-card" @click="goToBlocklyGui">
-        <div class="card-icon">🧠</div>
-        <div class="card-content">
-          <h3>人脸识别积木编程</h3>
-          <p>基于 NewFace 模块！自定义积木工具箱，体验 AI 初始化、模型加载与人脸录入。</p>
-          <span class="tag">NewFace 实战</span>
->>>>>>> b24584f (HighLight)
+          <h3>人脸检测</h3>
+          <p>聚焦检测流程：加载模型、输入图片或摄像头，绘制检测结果。</p>
+          <span class="tag">检测工具栏</span>
         </div>
       </div>
+
+      <div class="feature-card ai-card" @click="goToFaceRegistration">
+        <div class="card-icon">🪪</div>
+        <div class="card-content">
+          <h3>人脸注册</h3>
+          <p>录入身份特征，建立人脸库，为后续识别做好数据准备。</p>
+          <span class="tag">注册工具栏</span>
+        </div>
+      </div>
+
+      <div class="feature-card ai-card" @click="goToFaceRecognition">
+        <div class="card-icon">👤🔍</div>
+        <div class="card-content">
+          <h3>人脸识别</h3>
+          <p>同时包含注册与识别积木：先注册「我是谁」，再识别「你是谁」。</p>
+          <span class="tag">识别工具栏</span>
+        </div>
+      </div>
+
     </div>
   </div>
 </template>
@@ -136,10 +155,7 @@ const goToBlocklyGui = () => {
   font-weight: bold;
 }
 
-<<<<<<< HEAD
-.h5-card .tag { background: #e1f5fe; color: #0288d1; }
-.code-card .tag { background: #e8f5e9; color: #388e3c; }
-=======
+
 /* Styles for the H5 card tag */
 .h5-card .tag {
   background: #e1f5fe;
@@ -151,5 +167,6 @@ const goToBlocklyGui = () => {
   background: #f3e5f5;
   color: #7b1fa2;
 }
->>>>>>> b24584f (HighLight)
+
+
 </style>

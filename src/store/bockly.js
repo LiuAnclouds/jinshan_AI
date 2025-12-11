@@ -1,19 +1,12 @@
 import { toRaw } from 'vue';
-import Blockly from 'blockly';
-<<<<<<< HEAD
-import lang from '@/container/PythonCode/lang';
-=======
+import * as Blockly from 'blockly/core';
 import lang from '@/container/BlocklyGui/lang';
->>>>>>> b24584f (HighLight)
 const LanguagePack = lang.LanguagePack
 
 export default {
   master: '',
-<<<<<<< HEAD
-=======
   term: null,
   termMode: 'code', // 'code' | 'run'
->>>>>>> b24584f (HighLight)
   viewMode: {
     gui: 1,
     editor: 0,
@@ -23,13 +16,11 @@ export default {
   pyCode: '',
   xmlCode: '',
   editorList: [],
-<<<<<<< HEAD
-=======
   selectedBlockCode: '',          // 首行预览
   selectedBlockSnippet: '',       // 完整片段，用于高亮
   selectedWorkspaceCode: '',
-  selectedBlockLine: -1,          // 0-based 行号，高亮行用
->>>>>>> b24584f (HighLight)
+  selectedBlockLine: -1,          // 高亮的开始行号（0-based），用于区分重复积木
+  selectedBlockEndLine: -1,       // 高亮的结束行号（0-based），用于范围高亮
   running: false,
   workspace: null,
   cateoryObj: LanguagePack.CateoryObj,
@@ -46,27 +37,6 @@ export default {
   setWorkspace(val) {
     this.workspace = val;
   },
-<<<<<<< HEAD
-=======
-  setTerm(term) {
-    this.term = term;
-  },
-  setTermMode(mode) {
-    if (mode === 'code' || mode === 'run') {
-      this.termMode = mode;
-    }
-  },
-  writeTerm({ text = '', clear = false } = {}) {
-    if (!this.term || typeof this.term.write !== 'function') return;
-    // 仅在运行模式输出运行结果；代码模式输出代码
-    if (clear && typeof this.term.reset === 'function') {
-      this.term.reset();
-    }
-    // 终端换行用\r\n，避免显示错位
-    const content = (text || '').toString().replace(/\n/g, '\r\n');
-    this.term.write(content);
-  },
->>>>>>> b24584f (HighLight)
   setViewMode(obj) {
     for (const k in obj) {
       if (!Object.hasOwn(this.viewMode, k)) continue;
@@ -76,15 +46,7 @@ export default {
   setEditorList(val) {
     this.editorList = val;
   },
-<<<<<<< HEAD
-  setICON() {
-    let workspace = toRaw(this.workspace);
-    const toolbox = workspace.getToolbox();
-    this.setBlocklyIcon(toolbox.tree_.children_);
-  },
-  async setBlocklyIcon(domArr) {
-=======
-  setSelectedCodes({ blockCode = '', workspaceCode = '', startLine = -1 } = {}) {
+  setSelectedCodes({ blockCode = '', workspaceCode = '', startLine = -1, endLine = -1 } = {}) {
     const norm = (v) => Array.isArray(v) ? (v[0] || '') : (v || '');
     const firstNonEmptyLine = (code) => {
       return (code || '')
@@ -96,7 +58,8 @@ export default {
     this.selectedBlockSnippet = snippet;
     this.selectedBlockCode = firstNonEmptyLine(snippet);
     this.selectedWorkspaceCode = norm(workspaceCode);
-    this.selectedBlockLine = Number.isInteger(startLine) ? startLine : -1;
+    this.selectedBlockLine = startLine >= 0 ? startLine : -1;
+    this.selectedBlockEndLine = endLine >= 0 ? endLine : -1;
   },
   setICON() {
     const workspace = toRaw(this.workspace);
@@ -108,7 +71,6 @@ export default {
   },
   async setBlocklyIcon(domArr) {
     if (!domArr || !Array.isArray(domArr)) return;
->>>>>>> b24584f (HighLight)
     let num = -1;
     // console.log(res)
     for (let i = 0; i < domArr.length; i++) {

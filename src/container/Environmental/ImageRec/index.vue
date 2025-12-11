@@ -18,9 +18,9 @@ const viewMode = ref(null);
 
 onMounted(() => {
   const route = useRoute();
-  console.log(route.query);
+  // console.log(route.query);
   viewMode.value = route.query?.view_mode;
-  console.log(viewMode.value);
+  // console.log(viewMode.value);
 });
 
 const handleFileChange = async (event) => {

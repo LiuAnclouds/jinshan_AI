@@ -26,6 +26,11 @@ const props = defineProps({
   highlightLine: {
     type: Number,
     default: -1
+  },
+  // 高亮的结束行号（0-based），用于范围高亮
+  highlightEndLine: {
+    type: Number,
+    default: -1
   }
 })
 
@@ -49,7 +54,12 @@ function clearHighlight() {
 
 function applyHighlight(text) {
   if (typeof props.highlightLine === 'number' && props.highlightLine >= 0) {
-    applyHighlightLine(props.highlightLine)
+    // 如果有结束行号，使用范围高亮；否则使用单行高亮
+    if (typeof props.highlightEndLine === 'number' && props.highlightEndLine >= 0 && props.highlightEndLine >= props.highlightLine) {
+      applyHighlightRange(props.highlightLine, props.highlightEndLine)
+    } else {
+      applyHighlightLine(props.highlightLine)
+    }
     return
   }
   const editor = getAceInstance()
@@ -111,6 +121,11 @@ watch(
   (line) => applyHighlight(props.highlightText)
 )
 
+watch(
+  () => props.highlightEndLine,
+  () => applyHighlight(props.highlightText)
+)
+
 onMounted(() => {
   applyHighlight(props.highlightText)
 })
@@ -161,6 +176,24 @@ function applyHighlightLine(line) {
   clearHighlight()
   markRange(session, safeLine, 0, safeLine, len)
   console.log('[highlight] applied by line', safeLine + 1)
+}
+
+function applyHighlightRange(startLine, endLine) {
+  const editor = getAceInstance()
+  if (!editor || startLine < 0 || endLine < startLine) {
+    clearHighlight()
+    return
+  }
+  const session = editor.getSession()
+  const doc = session.getDocument()
+  const lines = doc.getAllLines()
+  const safeStartLine = Math.min(startLine, lines.length - 1)
+  const safeEndLine = Math.min(endLine, lines.length - 1)
+  const startLen = lines[safeStartLine]?.length || 0
+  const endLen = lines[safeEndLine]?.length || 0
+  clearHighlight()
+  markRange(session, safeStartLine, 0, safeEndLine, endLen)
+  console.log('[highlight] applied by range', safeStartLine + 1, 'to', safeEndLine + 1)
 }
 </script>
 

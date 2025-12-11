@@ -110,7 +110,7 @@ onMounted(() => {
     );
 
     lf.deleteNode(id);
-    console.log(getFlowOrder());
+    // console.log(getFlowOrder());
     
   })
 

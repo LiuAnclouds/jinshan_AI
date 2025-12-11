@@ -12,6 +12,7 @@ import AceHighlight from '@/container/BlocklyGui/Highlight/AceHighlight/index.vu
       :highlight-text="store.selectedBlockCode"
       :highlight-snippet="store.selectedBlockSnippet"
       :highlight-line="store.selectedBlockLine"
+      :highlight-end-line="store.selectedBlockEndLine"
     />
   </div>
 </template>

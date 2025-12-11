@@ -1,4 +1,4 @@
-import * as Blockly from 'blockly/core';
+﻿import * as Blockly from 'blockly/core';
 import 'blockly/python'
 Blockly.Python.functions_ = Object.create(null);
 Blockly.Python.tops_ = Object.create(null);
@@ -55,9 +55,8 @@ import './play_game/dqn_model_inference';
 
 import './env_bcst'
 
-<<<<<<< HEAD
-=======
+
 // 按需加载人脸识别积木入口，供需要的功能模块调用
-export { loadFaceBlocks } from './loadFace';
->>>>>>> b24584f (HighLight)
+export { loadFaceBlocks } from './NewFace/loader';
+
 

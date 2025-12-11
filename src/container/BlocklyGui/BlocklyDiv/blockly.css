@@ -64,9 +64,6 @@
   border-right: 1px solid #b9aeae;
   border-width: 1px 1px 1px 0;
   box-sizing: border-box;
-  /* 允许纵向滚动，确保长列表可见 */
-  overflow-y: auto;
-  max-height: calc(100vh - 60px);
 }
 .blocklyWidgetDiv {
   z-index: 21;
